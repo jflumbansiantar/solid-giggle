@@ -1,0 +1,241 @@
+/* ── Summary Grid ─────────────────────────────────────────────────────────── */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1100px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .summary-grid { grid-template-columns: 1fr; } }
+
+/* ── Summary Card ────────────────────────────────────────────────────────── */
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.6;
+}
+
+.sc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sc-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.sc-icon {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+.sc-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.sc-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ── Middle Row ──────────────────────────────────────────────────────────── */
+.dashboard-mid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1000px) {
+  .dashboard-mid { grid-template-columns: 1fr 1fr; }
+  .allocation-card { grid-column: span 2; }
+}
+@media (max-width: 640px) {
+  .dashboard-mid { grid-template-columns: 1fr; }
+  .allocation-card { grid-column: span 1; }
+}
+
+/* ── Allocation ──────────────────────────────────────────────────────────── */
+.allocation-card,
+.movers-card,
+.quick-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.allocation-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.allocation-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.allocation-segment {
+  border-radius: 4px;
+  transition: opacity var(--transition);
+}
+
+.allocation-segment:hover {
+  opacity: 0.75;
+  cursor: default;
+}
+
+.allocation-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  color: var(--text-secondary);
+}
+
+.legend-pct {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.allocation-values {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.alloc-val-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ── Top Movers ──────────────────────────────────────────────────────────── */
+.movers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mover-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.mover-row:hover {
+  background: var(--bg-card-hover);
+}
+
+.mover-ticker {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.mover-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Quick Holdings ──────────────────────────────────────────────────────── */
+.quick-holdings {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quick-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.quick-row:hover {
+  background: var(--bg-card-hover);
+}
+
+.quick-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quick-ticker {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.quick-name {
+  font-size: 11px;
+}
+
+.quick-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.quick-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}

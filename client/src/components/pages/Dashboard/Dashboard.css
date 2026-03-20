@@ -1,0 +1,269 @@
+/* ── Hero Card ────────────────────────────────────────────────────────────── */
+.dash-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 36px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(88,166,255,0.04) 100%);
+  border-color: rgba(88,166,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.dash-hero::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--green) 60%, transparent);
+}
+
+.hero-left  { display: flex; flex-direction: column; gap: 6px; }
+
+.hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.hero-value {
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+
+.hero-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.hero-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-shrink: 0;
+}
+
+.hero-divider {
+  width: 1px;
+  height: 52px;
+  background: var(--border);
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.hero-stat-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.hero-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.hero-stat-pct {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Market Breakdown + Recent Row ───────────────────────────────────────── */
+.dash-row-b {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.6fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* ── Market Breakdown Card ────────────────────────────────────────────────── */
+.market-breakdown-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mkt-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mkt-flag     { font-size: 24px; line-height: 1; }
+.mkt-name     { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.mkt-exchange { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+.mkt-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.mkt-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.mkt-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.mkt-pct { font-size: 11px; opacity: 0.8; }
+
+/* ── Recent Activity Card ─────────────────────────────────────────────────── */
+.recent-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.recent-list { display: flex; flex-direction: column; gap: 2px; }
+
+.recent-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.recent-row:hover { background: var(--bg-card-hover); }
+
+.recent-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  min-width: 38px;
+  text-align: center;
+}
+
+.badge-buy-type  { background: rgba(88,166,255,0.15); color: var(--accent); }
+.badge-sell-type { background: var(--red-dim); color: var(--red-text); }
+
+.recent-ticker {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 70px;
+}
+
+.recent-shares {
+  font-size: 12px;
+  flex: 1;
+}
+
+.recent-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 44px;
+  text-align: right;
+}
+
+.recent-total {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 72px;
+  text-align: right;
+}
+
+/* ── Bottom Row ───────────────────────────────────────────────────────────── */
+.dashboard-mid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* ── Allocation ───────────────────────────────────────────────────────────── */
+.allocation-card, .movers-card, .quick-card { display: flex; flex-direction: column; gap: 0; }
+
+.allocation-bar-wrap { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+
+.allocation-bar { display: flex; height: 10px; border-radius: 8px; overflow: hidden; gap: 2px; }
+
+.allocation-segment { border-radius: 4px; transition: opacity var(--transition); }
+.allocation-segment:hover { opacity: 0.75; cursor: default; }
+
+.allocation-legend { display: flex; flex-wrap: wrap; gap: 14px; }
+
+.legend-item  { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.legend-dot   { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { color: var(--text-secondary); }
+.legend-pct   { color: var(--text-primary); font-weight: 600; }
+
+.allocation-values { display: flex; flex-direction: column; gap: 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+.alloc-val-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; }
+
+/* ── Top Movers ───────────────────────────────────────────────────────────── */
+.movers-list { display: flex; flex-direction: column; gap: 2px; }
+
+.mover-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); transition: background var(--transition); }
+.mover-row:hover { background: var(--bg-card-hover); }
+
+.mover-ticker { font-size: 13px; font-weight: 700; color: var(--text-primary); width: 56px; flex-shrink: 0; }
+.mover-name   { font-size: 12px; color: var(--text-secondary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Largest Positions ────────────────────────────────────────────────────── */
+.quick-holdings { display: flex; flex-direction: column; gap: 2px; }
+
+.quick-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius-sm); transition: background var(--transition); }
+.quick-row:hover { background: var(--bg-card-hover); }
+
+.quick-left  { display: flex; flex-direction: column; gap: 2px; }
+.quick-ticker { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.quick-name  { font-size: 11px; }
+
+.quick-right  { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.quick-value  { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .dash-hero   { flex-direction: column; align-items: flex-start; gap: 24px; padding: 28px; }
+  .hero-right  { width: 100%; justify-content: flex-start; }
+  .dash-row-b  { grid-template-columns: 1fr 1fr; }
+  .recent-card { grid-column: span 2; }
+}
+
+@media (max-width: 1000px) {
+  .dashboard-mid   { grid-template-columns: 1fr 1fr; }
+  .allocation-card { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .dash-hero    { padding: 22px 20px; }
+  .hero-value   { font-size: 34px; }
+  .hero-divider { height: 40px; }
+  .hero-stat-value { font-size: 18px; }
+  .dash-row-b   { grid-template-columns: 1fr; }
+  .recent-card  { grid-column: span 1; }
+}
+
+@media (max-width: 640px) {
+  .dashboard-mid   { grid-template-columns: 1fr; }
+  .allocation-card { grid-column: span 1; }
+}

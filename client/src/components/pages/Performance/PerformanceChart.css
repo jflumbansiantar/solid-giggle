@@ -1,0 +1,54 @@
+/* ── Stats Grid ──────────────────────────────────────────────────────────── */
+.perf-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+
+@media (max-width: 900px) { .perf-stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .perf-stats-grid { grid-template-columns: 1fr; } }
+
+.perf-stat { display: flex; flex-direction: column; gap: 6px; }
+.ps-label  { font-size: 11px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; }
+.ps-value  { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
+.ps-sub    { font-size: 12px; }
+
+/* ── Chart Container ─────────────────────────────────────────────────────── */
+.chart-container { padding: 24px 8px 16px 8px; }
+
+/* ── Tooltip ─────────────────────────────────────────────────────────────── */
+.chart-tooltip { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow); padding: 12px 16px; min-width: 180px; }
+.tooltip-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+.tooltip-row   { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.tooltip-dot   { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.tooltip-val   { margin-left: auto; font-weight: 600; color: var(--text-primary); }
+.tooltip-diff  { font-size: 11px; font-weight: 600; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
+
+/* ── Legend pills ────────────────────────────────────────────────────────── */
+.chart-legend-pills { display: flex; gap: 12px; }
+
+.legend-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+.legend-pill::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--dot); }
+
+/* ── Monthly table ───────────────────────────────────────────────────────── */
+.monthly-table-wrap { overflow-x: auto; }
+
+.monthly-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.monthly-table thead th {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 12px 16px;
+  text-align: left;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+.monthly-table th.num { text-align: right; }
+
+.monthly-table tbody tr { border-bottom: 1px solid rgba(48,54,61,0.6); transition: background var(--transition); }
+.monthly-table tbody tr:last-child { border-bottom: none; }
+.monthly-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.monthly-table td { padding: 11px 16px; color: var(--text-primary); }
+
+.month-cell { font-weight: 500; color: var(--text-secondary); }
+.num { text-align: right; font-variant-numeric: tabular-nums; }

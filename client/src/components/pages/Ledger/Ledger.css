@@ -1,0 +1,219 @@
+/* ── KPI Grid ────────────────────────────────────────────────────────────── */
+.ledger-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 1000px) { .ledger-kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .ledger-kpi-grid { grid-template-columns: 1fr; } }
+
+.ledger-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kpi-label { font-size: 11px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; }
+.kpi-value { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); }
+.kpi-sub   { font-size: 12px; font-weight: 500; }
+
+/* ── Middle row ──────────────────────────────────────────────────────────── */
+.ledger-summary-mid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.7fr;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px)  { .ledger-summary-mid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px)  { .ledger-summary-mid { grid-template-columns: 1fr; } }
+
+/* ── Breakdown cards ─────────────────────────────────────────────────────── */
+.ledger-breakdown-card, .ledger-bs-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.breakdown-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
+
+.breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.breakdown-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.breakdown-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.breakdown-name { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+.breakdown-pct  { font-size: 12px; font-weight: 600; }
+.breakdown-val  { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-align: right; }
+
+/* ── Mini bar ────────────────────────────────────────────────────────────── */
+.mini-bar-track {
+  height: 5px;
+  background: var(--bg-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mini-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* ── Balance sheet ───────────────────────────────────────────────────────── */
+.bs-section { display: flex; flex-direction: column; gap: 10px; }
+
+.bs-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.bs-header { color: var(--text-primary); font-weight: 700; font-size: 14px; }
+.bs-total  { font-size: 15px; font-weight: 800; padding-top: 4px; }
+
+.bs-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* ── Ledger table (shared) ───────────────────────────────────────────────── */
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ledger-table thead th {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 13px 16px;
+  text-align: left;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.ledger-table td {
+  padding: 11px 16px;
+  vertical-align: middle;
+  color: var(--text-primary);
+}
+
+/* ── Account group headers ───────────────────────────────────────────────── */
+.account-group-header td {
+  background: rgba(255,255,255,0.02);
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.account-type-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.account-code { font-size: 12px; font-family: monospace; }
+.account-name { font-weight: 500; }
+
+.account-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ── Journal entries ─────────────────────────────────────────────────────── */
+.journal-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.journal-search {
+  flex: 1;
+  max-width: 340px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.journal-search:focus { border-color: var(--accent); }
+.journal-search::placeholder { color: var(--text-muted); }
+
+.journal-entry-first {
+  border-top: 1px solid var(--border);
+}
+
+.journal-ref  { font-family: monospace; font-size: 11px; white-space: nowrap; }
+.journal-date { white-space: nowrap; font-weight: 500; color: var(--text-secondary); font-size: 12px; }
+.journal-desc { font-weight: 500; max-width: 240px; }
+
+.journal-account {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.journal-account-name {
+  font-size: 13px;
+}
+
+/* ── Filter pills (reused) ───────────────────────────────────────────────── */
+.type-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.filter-pill {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  transition: all var(--transition);
+}
+
+.filter-pill:hover { border-color: var(--border-light); color: var(--text-primary); }
+.filter-pill.active { background: rgba(88,166,255,0.15); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+/* ── Shared table utilities ──────────────────────────────────────────────── */
+.num  { text-align: right; font-variant-numeric: tabular-nums; }
+.bold { font-weight: 600; }
+.month-cell { font-weight: 500; color: var(--text-secondary); }
