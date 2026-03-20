@@ -1,20 +1,28 @@
 # PortfolioOS — Personal Finance Dashboard
 
-A full-stack personal finance dashboard for tracking investment holdings across US and Indonesian (IDX) markets, managing transactions, visualizing performance, and maintaining a double-entry general ledger.
+A full-stack personal finance dashboard for tracking investment holdings across US and Indonesian (IDX) markets, managing transactions, visualizing performance, maintaining a double-entry general ledger, and estimating tax liability.
 
 ---
 
 ## Features
 
-- **Dashboard** — Portfolio overview with hero stats, market breakdown (US / IDX), recent activity, asset allocation, and top movers
-- **Holdings** — Full position table with market filter (All / US / IDX), type filter (Stock / ETF / Crypto), and gain/loss tracking
-- **Performance** — Portfolio vs benchmark chart over time with monthly return breakdown
-- **Transactions** — Buy/sell history with market and type badges
-- **General Ledger** — Double-entry bookkeeping with chart of accounts, journal entries, income/expense summary, and monthly trend
-- **Hide numbers** — Toggle to mask all monetary values (privacy mode)
-- **Night / Day mode** — Smooth animated theme switching with localStorage persistence
-- **Market status** — Real-time open/closed indicator for NYSE/NASDAQ and IDX
-- **Responsive** — Mobile hamburger menu, responsive grids down to 320px
+### Navigation tabs
+| Tab | Contents |
+|---|---|
+| **Dashboard** | Portfolio overview — hero stats, market breakdown (US / IDX), asset allocation donut, top movers, recent activity |
+| **Holdings** | Full position table with market filter (All / US / IDX), type filter (Stock / ETF / Crypto), sortable columns, gain/loss tracking — plus an embedded **Transactions** toggle (buy/sell history with summary banner) |
+| **Performance** | Portfolio vs S&P 500 area chart (12-month trailing), alpha/drawdown stat cards, monthly breakdown table — plus an embedded **General Ledger** toggle (double-entry bookkeeping: chart of accounts, journal entries, income/expense summary) |
+| **Tax Calc** | Estimated tax liability per tax year — IDX final tax (0.1% of gross proceeds), US capital gains with selectable bracket (0 / 15 / 20 / custom %), unrealized gains reference table |
+| **Data Entry** | CRUD forms for all collections: Holdings, Transactions, Price Cache, Ledger Accounts, Journal Entries, Settings — with pencil (edit) and trash (delete) icon buttons |
+
+### Global UI
+- **Glassmorphism cards** — `backdrop-filter` blur + semi-transparent backgrounds throughout
+- **Animated bubble background** — canvas-based floating glass orbs with pulse/wobble physics
+- **Hide numbers** — toggle to mask all monetary values (privacy mode)
+- **Night / Day theme** — smooth animated switching with localStorage persistence
+- **Currency toggle** — USD / IDR with live conversion via `usdToIdr` setting
+- **Market status** — real-time open/closed indicator for NYSE/NASDAQ and IDX
+- **Responsive** — mobile hamburger menu, responsive grids down to 320 px
 
 ---
 
@@ -27,7 +35,7 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 | Charts | Recharts |
 | HTTP client | Axios |
 | Styling | Plain CSS with CSS custom properties (no CSS framework) |
-| State management | React Context API (`ThemeContext`, `HideNumbersContext`) |
+| State management | React Context API (`ThemeContext`, `HideNumbersContext`, `CurrencyContext`) |
 | Build tool | Create React App |
 
 ### Backend
@@ -35,16 +43,18 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 |---|---|
 | Runtime | Node.js |
 | Framework | Express 4 |
-| Database | MongoDB (via Mongoose) |
-| Environment | dotenv |
+| Database | MongoDB via Mongoose 8 |
 | Dev server | nodemon |
 
-### Database
-| | |
+### Database collections
+| Collection | Purpose |
 |---|---|
-| Database | MongoDB Atlas (cloud) or local MongoDB Community |
-| ODM | Mongoose 8 |
-| Collections | `holdings`, `transactions`, `pricecaches`, `ledgeraccounts`, `journalentries` |
+| `holdings` | Positions with shares, avg cost, type, market |
+| `pricecaches` | Current price + previous close per ticker |
+| `transactions` | Buy / sell history |
+| `ledgeraccounts` | Chart of accounts |
+| `journalentries` | Double-entry journal entries with lines |
+| `settings` | Key-value config (e.g. `usdToIdr`) |
 
 ---
 
@@ -54,29 +64,36 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 WebSite1/
 ├── client/                        # React frontend (Create React App)
 │   └── src/
-│       ├── api/                   # Axios API calls
+│       ├── api/                   # portfolioApi.js — all Axios calls + CRUD
 │       ├── components/
+│       │   ├── BubbleBackground.js  # Canvas animated bubble background
 │       │   ├── layout/            # Navbar
-│       │   ├── pages/             # Dashboard, Holdings, Performance, Transactions, Ledger
+│       │   ├── pages/
+│       │   │   ├── Dashboard/
+│       │   │   ├── Holdings/      # Holdings table + embedded Transactions view
+│       │   │   ├── Performance/   # Chart + embedded General Ledger view
+│       │   │   ├── TaxCalc/       # Tax liability calculator
+│       │   │   ├── Ledger/        # Ledger sub-components (AccountsTable, JournalTable, LedgerSummary)
+│       │   │   └── DataEntry/     # CRUD forms + Icons.js
 │       │   └── shared/            # LoadingScreen, ErrorScreen
-│       ├── constants/             # UI constants, allocation colours
-│       ├── context/               # ThemeContext, HideNumbersContext
-│       ├── hooks/                 # usePortfolio, useHoldings, etc.
+│       ├── constants/             # ui.js (TABS, TYPE_BADGE, MARKET_FLAG, ALLOCATION_COLORS)
+│       ├── context/               # ThemeContext, HideNumbersContext, CurrencyContext
+│       ├── hooks/                 # usePortfolio, useHoldings, useTransactions, usePerformance, useLedger
 │       └── utils/                 # formatters, marketHours
 │
 └── server/                        # Express backend
-    ├── data/                      # Static seed data (holdings, transactions, ledger)
     ├── helpers/                   # enrichHoldings, computeBalances
     ├── models/                    # Mongoose models
     │   ├── Holding.js
     │   ├── Transaction.js
     │   ├── PriceCache.js
     │   ├── LedgerAccount.js
-    │   └── JournalEntry.js
-    ├── routes/                    # Express routers
+    │   ├── JournalEntry.js
+    │   └── Setting.js
+    ├── routes/                    # Express routers (holdings, transactions, portfolio, prices, ledger, settings, performance)
     ├── scripts/
     │   └── seed.js                # One-time DB seed script
-    ├── services/                  # Business logic
+    ├── services/                  # Business logic (transactionsService, etc.)
     ├── db.js                      # Mongoose connection
     └── server.js                  # Entry point
 ```
@@ -104,28 +121,33 @@ cd WebSite1
 
 ### 2. Configure the server environment
 
-Create the `.env` file inside the `server/` folder (already exists as a placeholder):
+Create `server/.env`:
 
 ```bash
-# server/.env
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority
 PORT=5000
 ```
 
-> For a **local** MongoDB instance use: `MONGODB_URI=mongodb://localhost:27017/portfoliodb`
+> For a **local** MongoDB instance: `MONGODB_URI=mongodb://localhost:27017/portfoliodb`
 
-### 3. Install server dependencies
+### 3. Install all dependencies
 
 ```bash
-cd server
+npm run install:all
+```
+
+Or manually:
+
+```bash
 npm install
+cd server && npm install
+cd ../client && npm install
 ```
 
 ### 4. Seed the database
 
-Run the seed script once to populate MongoDB with the sample data:
-
 ```bash
+cd server
 node scripts/seed.js
 ```
 
@@ -141,32 +163,17 @@ Inserted 40 journal entries
 Seed complete.
 ```
 
-### 5. Start the server
+### 5. Start both server and client
+
+From the root:
 
 ```bash
-npm run dev        # development (nodemon, auto-restarts on changes)
-# or
-npm start          # production
+npm run dev
 ```
 
-The API will be available at `http://localhost:5000`.
+This runs `server` (nodemon on port 5000) and `client` (CRA on port 3000) concurrently.
 
-### 6. Install client dependencies
-
-Open a **new terminal**:
-
-```bash
-cd client
-npm install
-```
-
-### 7. Start the client
-
-```bash
-npm start
-```
-
-The app will open at `http://localhost:3000`. API requests are proxied to `http://localhost:5000` automatically (configured in `client/package.json`).
+The app opens at `http://localhost:3000`. API requests are proxied to `http://localhost:5000` automatically.
 
 ---
 
@@ -175,9 +182,9 @@ The app will open at `http://localhost:3000`. API requests are proxied to `http:
 ### Holdings
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/holdings` | All holdings (enriched with computed metrics) |
+| `GET` | `/api/holdings` | All holdings enriched with computed metrics |
 | `POST` | `/api/holdings` | Insert a new holding |
-| `PATCH` | `/api/holdings/:ticker` | Update shares / avgCost |
+| `PATCH` | `/api/holdings/:ticker` | Update shares / avgCost / name / type / market |
 | `DELETE` | `/api/holdings/:ticker` | Remove a holding |
 
 ### Transactions
@@ -190,13 +197,13 @@ The app will open at `http://localhost:3000`. API requests are proxied to `http:
 ### Portfolio
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/portfolio` | Aggregated portfolio summary (totals, allocation, movers, market breakdown, recent activity) |
+| `GET` | `/api/portfolio` | Aggregated summary (totals, allocation, movers, market breakdown, recent activity) |
 
 ### Price Cache
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/api/price-cache` | All cached prices |
-| `POST` | `/api/price-cache` | Upsert price for a ticker `{ ticker, currentPrice, previousClose }` |
+| `POST` | `/api/price-cache` | Upsert price `{ ticker, currentPrice, previousClose }` |
 | `DELETE` | `/api/price-cache/:ticker` | Remove a cached price |
 
 ### Ledger
@@ -205,11 +212,16 @@ The app will open at `http://localhost:3000`. API requests are proxied to `http:
 | `GET` | `/api/ledger/accounts` | All accounts with computed balances |
 | `POST` | `/api/ledger/accounts` | Insert a new account |
 | `PATCH` | `/api/ledger/accounts/:id` | Update an account |
-| `GET` | `/api/ledger/entries` | All journal entries (enriched with account names) |
+| `GET` | `/api/ledger/entries` | All journal entries enriched with account names |
 | `POST` | `/api/ledger/entries` | Insert a journal entry with lines |
-| `POST` | `/api/ledger/entries/:id/lines` | Add a line to an existing entry |
 | `DELETE` | `/api/ledger/entries/:id` | Remove a journal entry |
 | `GET` | `/api/ledger/summary` | Income/expense summary + monthly trend |
+
+### Settings
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/settings` | All settings as a flat key-value object |
+| `PATCH` | `/api/settings/:key` | Upsert a setting value |
 
 ### Performance
 | Method | Endpoint | Description |

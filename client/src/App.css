@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
 .main-content {
@@ -11,6 +13,8 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Section wrapper ─────────────────────────────────────────────────────── */
@@ -38,18 +42,25 @@
   margin-top: 2px;
 }
 
-/* ── Card ────────────────────────────────────────────────────────────────── */
+/* ── Card (glass) ────────────────────────────────────────────────────────── */
 .card {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: 24px;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  box-shadow: var(--glass-shadow);
+  transition:
+    background     var(--transition),
+    border-color   var(--transition),
+    box-shadow     var(--transition);
 }
 
 .card:hover {
-  border-color: var(--border-light);
-  box-shadow: var(--shadow-sm);
+  background: var(--bg-card-hover);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-shadow-hover);
 }
 
 /* ── Tab Nav ─────────────────────────────────────────────────────────────── */

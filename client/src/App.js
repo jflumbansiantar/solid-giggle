@@ -5,11 +5,12 @@ import { ThemeProvider }       from './context/ThemeContext';
 import { CurrencyProvider }    from './context/CurrencyContext';
 import { TABS }         from './constants/ui';
 import Navbar           from './components/layout/Navbar';
+import BubbleBackground from './components/BubbleBackground';
 import Dashboard        from './components/pages/Dashboard/Dashboard';
 import Holdings         from './components/pages/Holdings/Holdings';
-import Transactions     from './components/pages/Transactions/Transactions';
 import PerformanceChart from './components/pages/Performance/PerformanceChart';
-import Ledger           from './components/pages/Ledger/Ledger';
+import TaxCalc          from './components/pages/TaxCalc/TaxCalc';
+import DataEntry        from './components/pages/DataEntry/DataEntry';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -19,14 +20,15 @@ function App() {
     <CurrencyProvider>
     <HideNumbersProvider>
     <div className="app">
+      <BubbleBackground />
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} tabs={TABS} />
 
       <main className="main-content">
         {activeTab === 'dashboard'    && <Dashboard />}
         {activeTab === 'holdings'     && <Holdings />}
         {activeTab === 'performance'  && <PerformanceChart />}
-        {activeTab === 'transactions' && <Transactions />}
-        {activeTab === 'ledger'       && <Ledger />}
+        {activeTab === 'tax'          && <TaxCalc />}
+        {activeTab === 'data-entry'   && <DataEntry />}
       </main>
     </div>
     </HideNumbersProvider>

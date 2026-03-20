@@ -1,9 +1,9 @@
 export const TABS = [
-  { id: 'dashboard',    label: 'Dashboard'    },
-  { id: 'holdings',     label: 'Holdings'     },
-  { id: 'performance',  label: 'Performance'  },
-  { id: 'transactions', label: 'Transactions' },
-  { id: 'ledger',       label: 'General Ledger' },
+  { id: 'dashboard',   label: 'Dashboard'     },
+  { id: 'holdings',    label: 'Holdings'      },
+  { id: 'performance', label: 'Performance'   },
+  { id: 'tax',         label: 'Tax Calc'      },
+  { id: 'data-entry',  label: 'Data Entry'    },
 ];
 
 export const TYPE_BADGE = {

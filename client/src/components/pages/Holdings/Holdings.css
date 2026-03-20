@@ -1,6 +1,37 @@
 /* ── Filter pills ────────────────────────────────────────────────────────── */
 .type-filters { display: flex; gap: 8px; flex-wrap: wrap; }
 
+/* ── Filter row (market pills + divider + transactions toggle) ───────────── */
+.holdings-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--glass-border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.filter-pill-tx {
+  background: rgba(167, 139, 250, 0.08);
+  border-color: rgba(167, 139, 250, 0.25) !important;
+  color: #a78bfa !important;
+}
+.filter-pill-tx:hover {
+  background: rgba(167, 139, 250, 0.15) !important;
+  border-color: #a78bfa !important;
+}
+.filter-pill-tx.active {
+  background: rgba(167, 139, 250, 0.18) !important;
+  border-color: #a78bfa !important;
+  color: #a78bfa !important;
+}
+
 .filter-pill {
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -27,7 +58,7 @@
   overflow: hidden;
 }
 
-.total-cell { display: flex; flex-direction: column; gap: 6px; padding: 18px 24px; border-right: 1px solid var(--border); }
+.total-cell { display: flex; flex-direction: column; gap: 6px; padding: 18px 24px; border-right: 1px solid var(--glass-border); }
 .total-cell:last-child { border-right: none; }
 .total-label { font-size: 11px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; }
 .total-val   { font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; }
@@ -48,7 +79,7 @@
 .holdings-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 
 .holdings-table thead th {
-  background: var(--bg-secondary);
+  background: rgba(0, 0, 0, 0.18);
   color: var(--text-secondary);
   font-size: 11px;
   font-weight: 600;
@@ -69,9 +100,9 @@
 .sort-icon.neutral { opacity: 0.3; }
 .sort-icon.active  { color: var(--accent); opacity: 1; }
 
-.holding-row { border-bottom: 1px solid rgba(48,54,61,0.6); transition: background var(--transition); }
+.holding-row { border-bottom: 1px solid var(--glass-border); transition: background var(--transition); }
 .holding-row:last-child { border-bottom: none; }
-.holding-row:hover { background: rgba(255,255,255,0.03); }
+.holding-row:hover { background: rgba(255, 255, 255, 0.04); }
 
 .holdings-table td { padding: 13px 16px; vertical-align: middle; color: var(--text-primary); }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ResponsiveContainer, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip,
@@ -10,7 +10,9 @@ import LoadingScreen         from '../../shared/LoadingScreen';
 import ErrorScreen           from '../../shared/ErrorScreen';
 import CustomTooltip         from './CustomTooltip';
 import StatCard              from './StatCard';
+import Ledger                from '../Ledger/Ledger';
 import './PerformanceChart.css';
+import '../Holdings/Holdings.css';
 
 const MASK = '••••••';
 
@@ -18,6 +20,7 @@ function PerformanceChart() {
   const { data, loading, error } = usePerformance();
   const { hidden } = useHideNumbers();
   const { currency, usdToIdr, fmtMoneyCompact } = useCurrency();
+  const [view, setView] = useState('performance');
 
   if (loading) return <LoadingScreen message="Loading chart…" />;
   if (error)   return <ErrorScreen message={error} />;
@@ -40,15 +43,27 @@ function PerformanceChart() {
     <div className="performance-page">
       <div className="section-header" style={{ marginBottom: 20 }}>
         <div>
-          <h2 className="section-title">Portfolio Performance</h2>
-          <p className="section-subtitle">12-month trailing vs. S&P 500 benchmark</p>
+          <h2 className="section-title">{view === 'performance' ? 'Portfolio Performance' : 'General Ledger'}</h2>
+          <p className="section-subtitle">{view === 'performance' ? '12-month trailing vs. S&P 500 benchmark' : 'Double-entry bookkeeping'}</p>
         </div>
-        <div className="chart-legend-pills">
-          <span className="legend-pill" style={{ '--dot': '#58a6ff' }}>Portfolio</span>
-          <span className="legend-pill" style={{ '--dot': '#3fb950' }}>S&P 500</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          {view === 'performance' && (
+            <div className="chart-legend-pills">
+              <span className="legend-pill" style={{ '--dot': '#58a6ff' }}>Portfolio</span>
+              <span className="legend-pill" style={{ '--dot': '#3fb950' }}>S&P 500</span>
+            </div>
+          )}
+          <button
+            className={`filter-pill filter-pill-ledger ${view === 'ledger' ? 'active' : ''}`}
+            onClick={() => setView(view === 'ledger' ? 'performance' : 'ledger')}
+          >
+            ⇄ Ledger
+          </button>
         </div>
       </div>
 
+      {view === 'ledger' ? <Ledger /> : (
+      <>
       {/* Stats row */}
       <div className="perf-stats-grid">
         <StatCard label="Portfolio Return (1Y)"  value={`${portPct >= 0  ? '+' : ''}${portPct}%`}  sub={`${portGain  >= 0 ? '+' : ''}${mc(portGain)}`}              isGain={portGain >= 0}  />
@@ -121,6 +136,8 @@ function PerformanceChart() {
           </tbody>
         </table>
       </div>
+      </>
+      )}
     </div>
   );
 }

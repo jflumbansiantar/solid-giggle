@@ -68,7 +68,7 @@
 /* ── Mini bar ────────────────────────────────────────────────────────────── */
 .mini-bar-track {
   height: 5px;
-  background: var(--bg-secondary);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -95,7 +95,7 @@
 
 .bs-divider {
   height: 1px;
-  background: var(--border);
+  background: var(--glass-border);
   margin: 4px 0;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .ledger-table thead th {
-  background: var(--bg-secondary);
+  background: rgba(0, 0, 0, 0.18);
   color: var(--text-secondary);
   font-size: 11px;
   font-weight: 600;
@@ -127,10 +127,10 @@
 
 /* ── Account group headers ───────────────────────────────────────────────── */
 .account-group-header td {
-  background: rgba(255,255,255,0.02);
+  background: rgba(0, 0, 0, 0.12);
   padding: 8px 16px;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .account-type-label {

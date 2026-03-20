@@ -27,7 +27,7 @@
   overflow: hidden;
 }
 
-.tx-sum-cell { display: flex; flex-direction: column; gap: 6px; padding: 18px 24px; border-right: 1px solid var(--border); }
+.tx-sum-cell { display: flex; flex-direction: column; gap: 6px; padding: 18px 24px; border-right: 1px solid var(--glass-border); }
 .tx-sum-cell:last-child { border-right: none; }
 .tx-sum-label { font-size: 11px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; }
 .tx-sum-val   { font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; }
@@ -46,8 +46,8 @@
 .tx-list { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
 
 .tx-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; transition: background var(--transition); gap: 16px; }
-.tx-item:hover { background: rgba(255,255,255,0.03); }
-.tx-item.bordered { border-bottom: 1px solid rgba(48,54,61,0.6); }
+.tx-item:hover { background: rgba(255, 255, 255, 0.04); }
+.tx-item.bordered { border-bottom: 1px solid var(--glass-border); }
 
 .tx-left { display: flex; align-items: center; gap: 14px; }
 

@@ -1,11 +1,13 @@
 /* ── Navbar ───────────────────────────────────────────────────────────────── */
 .navbar {
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 1px 0 var(--glass-border), var(--glass-shadow);
   position: sticky;
   top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
+  z-index: 200;
 }
 
 .navbar-inner {
@@ -278,12 +280,14 @@
   right: 0;
   left: 0;
   z-index: 99;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
   flex-direction: column;
   padding: 8px 16px 16px;
   gap: 4px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: var(--glass-shadow);
 }
 
 .mobile-nav-btn {
