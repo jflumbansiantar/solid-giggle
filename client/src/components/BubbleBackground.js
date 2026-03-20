@@ -29,7 +29,7 @@ function makeBubble(w, h, colors) {
     dx:         (Math.random() - 0.5) * 0.35,
     dy:         -(0.25 + Math.random() * 0.55),
     color:      colors[Math.floor(Math.random() * colors.length)],
-    opacity:    0.056 + Math.random() * 0.119,
+    opacity:    0.070 + Math.random() * 0.149,
     phase:      Math.random() * Math.PI * 2,
     phaseSpeed: 0.006 + Math.random() * 0.009,
     wobble:     0,
@@ -86,7 +86,7 @@ function BubbleBackground() {
         if (b.x + b.r <  0)             b.x = canvas.width + b.r;
 
         const pr = b.r + Math.sin(b.phase) * 3;          // pulsing radius
-        const po = b.opacity + Math.sin(b.phase) * 0.018; // pulsing opacity
+        const po = b.opacity + Math.sin(b.phase) * 0.0225; // pulsing opacity
 
         // ── Body gradient ────────────────────────────────────────────────
         const grad = ctx.createRadialGradient(

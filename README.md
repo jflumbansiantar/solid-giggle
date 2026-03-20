@@ -7,8 +7,9 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 ## Features
 
 ### Navigation tabs
+
 | Tab | Contents |
-|---|---|
+| --- | --- |
 | **Dashboard** | Portfolio overview — hero stats, market breakdown (US / IDX), asset allocation donut, top movers, recent activity |
 | **Holdings** | Full position table with market filter (All / US / IDX), type filter (Stock / ETF / Crypto), sortable columns, gain/loss tracking — plus an embedded **Transactions** toggle (buy/sell history with summary banner) |
 | **Performance** | Portfolio vs S&P 500 area chart (12-month trailing), alpha/drawdown stat cards, monthly breakdown table — plus an embedded **General Ledger** toggle (double-entry bookkeeping: chart of accounts, journal entries, income/expense summary) |
@@ -16,6 +17,7 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 | **Data Entry** | CRUD forms for all collections: Holdings, Transactions, Price Cache, Ledger Accounts, Journal Entries, Settings — with pencil (edit) and trash (delete) icon buttons |
 
 ### Global UI
+
 - **Glassmorphism cards** — `backdrop-filter` blur + semi-transparent backgrounds throughout
 - **Animated bubble background** — canvas-based floating glass orbs with pulse/wobble physics
 - **Hide numbers** — toggle to mask all monetary values (privacy mode)
@@ -29,8 +31,9 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 ## Tech Stack
 
 ### Frontend
+
 | | |
-|---|---|
+| --- | --- |
 | Framework | React 18 |
 | Charts | Recharts |
 | HTTP client | Axios |
@@ -39,16 +42,18 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 | Build tool | Create React App |
 
 ### Backend
+
 | | |
-|---|---|
+| --- | --- |
 | Runtime | Node.js |
 | Framework | Express 4 |
 | Database | MongoDB via Mongoose 8 |
 | Dev server | nodemon |
 
 ### Database collections
+
 | Collection | Purpose |
-|---|---|
+| --- | --- |
 | `holdings` | Positions with shares, avg cost, type, market |
 | `pricecaches` | Current price + previous close per ticker |
 | `transactions` | Buy / sell history |
@@ -60,7 +65,7 @@ A full-stack personal finance dashboard for tracking investment holdings across 
 
 ## Project Structure
 
-```
+```text
 WebSite1/
 ├── client/                        # React frontend (Create React App)
 │   └── src/
@@ -148,11 +153,12 @@ cd ../client && npm install
 
 ```bash
 cd server
-node scripts/seed.js
+node server/scripts/seed.js
 ```
 
 Expected output:
-```
+
+```text
 Connected to MongoDB
 Cleared existing collections
 Inserted 14 holdings
@@ -180,35 +186,40 @@ The app opens at `http://localhost:3000`. API requests are proxied to `http://lo
 ## API Reference
 
 ### Holdings
+
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/holdings` | All holdings enriched with computed metrics |
 | `POST` | `/api/holdings` | Insert a new holding |
 | `PATCH` | `/api/holdings/:ticker` | Update shares / avgCost / name / type / market |
 | `DELETE` | `/api/holdings/:ticker` | Remove a holding |
 
 ### Transactions
+
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/transactions` | All transactions (newest first) |
 | `POST` | `/api/transactions` | Insert a transaction |
 | `DELETE` | `/api/transactions/:id` | Remove a transaction |
 
 ### Portfolio
+
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/portfolio` | Aggregated summary (totals, allocation, movers, market breakdown, recent activity) |
 
 ### Price Cache
+
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/price-cache` | All cached prices |
 | `POST` | `/api/price-cache` | Upsert price `{ ticker, currentPrice, previousClose }` |
 | `DELETE` | `/api/price-cache/:ticker` | Remove a cached price |
 
 ### Ledger
+
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/ledger/accounts` | All accounts with computed balances |
 | `POST` | `/api/ledger/accounts` | Insert a new account |
 | `PATCH` | `/api/ledger/accounts/:id` | Update an account |
@@ -218,14 +229,16 @@ The app opens at `http://localhost:3000`. API requests are proxied to `http://lo
 | `GET` | `/api/ledger/summary` | Income/expense summary + monthly trend |
 
 ### Settings
+
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/settings` | All settings as a flat key-value object |
 | `PATCH` | `/api/settings/:key` | Upsert a setting value |
 
 ### Performance
+
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/performance` | Monthly portfolio vs benchmark data |
 
 ---
@@ -233,6 +246,6 @@ The app opens at `http://localhost:3000`. API requests are proxied to `http://lo
 ## Environment Variables
 
 | Variable | Required | Description |
-|---|---|---|
+| --- | --- | --- |
 | `MONGODB_URI` | Yes | MongoDB connection string |
 | `PORT` | No | Server port (default: `5000`) |
