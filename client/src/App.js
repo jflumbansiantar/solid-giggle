@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import { HideNumbersProvider } from './context/HideNumbersContext';
 import { ThemeProvider }       from './context/ThemeContext';
+import { CurrencyProvider }    from './context/CurrencyContext';
 import { TABS }         from './constants/ui';
 import Navbar           from './components/layout/Navbar';
 import Dashboard        from './components/pages/Dashboard/Dashboard';
@@ -15,6 +16,7 @@ function App() {
 
   return (
     <ThemeProvider>
+    <CurrencyProvider>
     <HideNumbersProvider>
     <div className="app">
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} tabs={TABS} />
@@ -28,6 +30,7 @@ function App() {
       </main>
     </div>
     </HideNumbersProvider>
+    </CurrencyProvider>
     </ThemeProvider>
   );
 }

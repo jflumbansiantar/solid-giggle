@@ -1,8 +1,9 @@
 import React from 'react';
 import { usePortfolio }        from '../../../hooks/usePortfolio';
-import { fmt, fmtUSD }         from '../../../utils/formatters';
+import { fmt }                 from '../../../utils/formatters';
 import { MARKET_FLAG }         from '../../../constants/ui';
 import { useHideNumbers }      from '../../../context/HideNumbersContext';
+import { useCurrency }         from '../../../context/CurrencyContext';
 import LoadingScreen            from '../../shared/LoadingScreen';
 import ErrorScreen              from '../../shared/ErrorScreen';
 import AllocationBar            from './AllocationBar';
@@ -16,7 +17,7 @@ const MARKET_INFO = {
   ID: { flag: '🇮🇩', name: 'IDX Market', exchange: 'Indonesia Stock Exchange' },
 };
 
-function MarketCard({ mkt, m, hidden }) {
+function MarketCard({ mkt, m, hidden, fmtMoney }) {
   const info    = MARKET_INFO[mkt.market] || {};
   const isPosDay   = mkt.dayGL   >= 0;
   const isPosTotal = mkt.totalGL >= 0;
@@ -38,13 +39,13 @@ function MarketCard({ mkt, m, hidden }) {
         <div className="mkt-stat-row">
           <span className="muted">Today</span>
           <span className={isPosDay ? 'gain' : 'loss'}>
-            {hidden ? MASK : `${isPosDay ? '+' : ''}${fmtUSD(mkt.dayGL)}`}
+            {hidden ? MASK : `${isPosDay ? '+' : ''}${fmtMoney(mkt.dayGL)}`}
           </span>
         </div>
         <div className="mkt-stat-row">
           <span className="muted">All-time</span>
           <span className={isPosTotal ? 'gain' : 'loss'}>
-            {hidden ? MASK : `${isPosTotal ? '+' : ''}${fmtUSD(mkt.totalGL)}`}
+            {hidden ? MASK : `${isPosTotal ? '+' : ''}${fmtMoney(mkt.totalGL)}`}
             {' '}
             <span className="mkt-pct">({isPosTotal ? '+' : ''}{fmt(mkt.totalGLPct)}%)</span>
           </span>
@@ -54,7 +55,7 @@ function MarketCard({ mkt, m, hidden }) {
   );
 }
 
-function RecentTxRow({ tx, hidden }) {
+function RecentTxRow({ tx, hidden, fmtMoney }) {
   const isBuy = tx.type === 'BUY';
   const flag  = MARKET_FLAG[tx.market] || '';
   const date  = new Date(tx.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -64,7 +65,7 @@ function RecentTxRow({ tx, hidden }) {
       <span className="recent-ticker">{flag} {tx.ticker}</span>
       <span className="recent-shares muted">{tx.shares} sh</span>
       <span className="recent-date muted">{date}</span>
-      <span className="recent-total">{hidden ? MASK : fmtUSD(tx.total)}</span>
+      <span className="recent-total">{hidden ? MASK : fmtMoney(tx.total)}</span>
     </div>
   );
 }
@@ -72,11 +73,12 @@ function RecentTxRow({ tx, hidden }) {
 function Dashboard() {
   const { portfolio, holdings, loading, error } = usePortfolio();
   const { hidden } = useHideNumbers();
+  const { fmtMoney } = useCurrency();
 
   if (loading) return <LoadingScreen message="Loading portfolio…" />;
   if (error)   return <ErrorScreen message={error} />;
 
-  const m = (v) => hidden ? MASK : fmtUSD(v);
+  const m = (v) => hidden ? MASK : fmtMoney(v);
 
   const {
     totalValue, totalGainLoss, totalReturn,
@@ -104,7 +106,7 @@ function Dashboard() {
           <div className="hero-stat">
             <span className="hero-stat-label">Today</span>
             <span className={`hero-stat-value ${isPositiveDay ? 'gain' : 'loss'}`}>
-              {hidden ? MASK : `${isPositiveDay ? '+' : ''}${fmtUSD(dayGainLoss)}`}
+              {hidden ? MASK : `${isPositiveDay ? '+' : ''}${fmtMoney(dayGainLoss)}`}
             </span>
             <span className={`hero-stat-pct ${isPositiveDay ? 'gain' : 'loss'}`}>
               {isPositiveDay ? '+' : ''}{fmt(dayReturn)}%
@@ -114,7 +116,7 @@ function Dashboard() {
           <div className="hero-stat">
             <span className="hero-stat-label">All-time Return</span>
             <span className={`hero-stat-value ${isPositiveTotal ? 'gain' : 'loss'}`}>
-              {hidden ? MASK : `${isPositiveTotal ? '+' : ''}${fmtUSD(totalGainLoss)}`}
+              {hidden ? MASK : `${isPositiveTotal ? '+' : ''}${fmtMoney(totalGainLoss)}`}
             </span>
             <span className={`hero-stat-pct ${isPositiveTotal ? 'gain' : 'loss'}`}>
               {isPositiveTotal ? '+' : ''}{fmt(totalReturn)}%
@@ -126,7 +128,7 @@ function Dashboard() {
       {/* ── Market Breakdown + Recent Activity ── */}
       <div className="dash-row-b">
         {marketBreakdown.map((mkt) => (
-          <MarketCard key={mkt.market} mkt={mkt} m={m} hidden={hidden} />
+          <MarketCard key={mkt.market} mkt={mkt} m={m} hidden={hidden} fmtMoney={fmtMoney} />
         ))}
         <div className="card recent-card">
           <div className="section-header">
@@ -134,7 +136,7 @@ function Dashboard() {
           </div>
           <div className="recent-list">
             {recentTransactions.map((tx) => (
-              <RecentTxRow key={tx.id} tx={tx} hidden={hidden} />
+              <RecentTxRow key={tx.id} tx={tx} hidden={hidden} fmtMoney={fmtMoney} />
             ))}
           </div>
         </div>

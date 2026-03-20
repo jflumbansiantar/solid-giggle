@@ -1,14 +1,16 @@
 import React, { useMemo, useState } from 'react';
-import { fmtUSD, fmtDate }  from '../../../utils/formatters';
+import { fmtDate }          from '../../../utils/formatters';
 import { useHideNumbers }   from '../../../context/HideNumbersContext';
+import { useCurrency }      from '../../../context/CurrencyContext';
 
 const MASK = '••••••';
 
 function JournalTable({ entries }) {
   const { hidden } = useHideNumbers();
+  const { fmtMoney } = useCurrency();
   const [search, setSearch] = useState('');
 
-  const m = (v) => hidden ? MASK : fmtUSD(v);
+  const m = (v) => hidden ? MASK : fmtMoney(v);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();

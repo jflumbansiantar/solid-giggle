@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { fmtUSD }         from '../../../utils/formatters';
 import { useHideNumbers } from '../../../context/HideNumbersContext';
+import { useCurrency }    from '../../../context/CurrencyContext';
 
 const MASK = '••••••';
 
@@ -16,9 +16,10 @@ const TYPE_COLOR = {
 
 function AccountsTable({ accounts }) {
   const { hidden } = useHideNumbers();
+  const { fmtMoney } = useCurrency();
   const [filter, setFilter] = useState('All');
 
-  const m = (v) => hidden ? MASK : fmtUSD(v);
+  const m = (v) => hidden ? MASK : fmtMoney(v);
 
   const types = ['All', ...TYPE_ORDER.filter((t) => accounts.some((a) => a.type === t))];
   const filtered = filter === 'All' ? accounts : accounts.filter((a) => a.type === filter);

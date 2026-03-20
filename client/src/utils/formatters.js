@@ -10,6 +10,12 @@ export const fmtUSD = (n) =>
 export const fmtUSDCompact = (n) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 
+export const fmtIDR = (n) =>
+  new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
+
+export const fmtIDRCompact = (n) =>
+  new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
+
 export const fmtDate = (s) =>
   new Date(s + 'T00:00:00').toLocaleDateString('en-US', {
     year: 'numeric',

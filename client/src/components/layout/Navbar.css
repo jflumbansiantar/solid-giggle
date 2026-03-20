@@ -128,6 +128,55 @@
   border-top: 1px solid var(--border);
 }
 
+/* ── Currency toggle ─────────────────────────────────────────────────────── */
+.currency-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  flex-shrink: 0;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.currency-sign {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.currency-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+/* USD — green/teal tint */
+.currency-toggle.usd {
+  color: #34d399;
+  border-color: rgba(52,211,153,0.35);
+  background: rgba(52,211,153,0.08);
+}
+.currency-toggle.usd:hover {
+  background: rgba(52,211,153,0.18);
+  border-color: rgba(52,211,153,0.6);
+}
+
+/* IDR — red/rose tint */
+.currency-toggle.idr {
+  color: #fb7185;
+  border-color: rgba(251,113,133,0.35);
+  background: rgba(251,113,133,0.08);
+}
+.currency-toggle.idr:hover {
+  background: rgba(251,113,133,0.18);
+  border-color: rgba(251,113,133,0.6);
+}
+
 /* ── Theme toggle ────────────────────────────────────────────────────────── */
 .theme-toggle {
   background: none;

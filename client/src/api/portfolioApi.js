@@ -7,3 +7,5 @@ export const fetchPerformance     = () => axios.get('/api/performance').then((r)
 export const fetchLedgerAccounts  = () => axios.get('/api/ledger/accounts').then((r) => r.data);
 export const fetchLedgerEntries   = () => axios.get('/api/ledger/entries').then((r) => r.data);
 export const fetchLedgerSummary   = () => axios.get('/api/ledger/summary').then((r) => r.data);
+export const fetchSettings        = () => axios.get('/api/settings').then((r) => r.data);
+export const updateSetting        = (key, value) => axios.patch(`/api/settings/${key}`, { value }).then((r) => r.data);

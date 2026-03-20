@@ -4,8 +4,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip,
 } from 'recharts';
 import { usePerformance }    from '../../../hooks/usePerformance';
-import { fmtUSDCompact }     from '../../../utils/formatters';
 import { useHideNumbers }    from '../../../context/HideNumbersContext';
+import { useCurrency } from '../../../context/CurrencyContext';
 import LoadingScreen         from '../../shared/LoadingScreen';
 import ErrorScreen           from '../../shared/ErrorScreen';
 import CustomTooltip         from './CustomTooltip';
@@ -17,12 +17,13 @@ const MASK = '••••••';
 function PerformanceChart() {
   const { data, loading, error } = usePerformance();
   const { hidden } = useHideNumbers();
+  const { currency, usdToIdr, fmtMoneyCompact } = useCurrency();
 
   if (loading) return <LoadingScreen message="Loading chart…" />;
   if (error)   return <ErrorScreen message={error} />;
   if (!data.length) return null;
 
-  const mc = (v) => hidden ? MASK : fmtUSDCompact(v);
+  const mc = (v) => hidden ? MASK : fmtMoneyCompact(v);
 
   const first     = data[0];
   const last      = data[data.length - 1];
@@ -72,7 +73,11 @@ function PerformanceChart() {
             </defs>
             <CartesianGrid stroke="rgba(48,54,61,0.7)" strokeDasharray="3 3" vertical={false} />
             <XAxis dataKey="date" tick={{ fill: '#8b949e', fontSize: 11 }} tickLine={false} axisLine={{ stroke: '#30363d' }} />
-            <YAxis tickFormatter={(v) => hidden ? '•••' : `$${(v / 1000).toFixed(0)}k`} tick={{ fill: '#8b949e', fontSize: 11 }} tickLine={false} axisLine={false} width={56} domain={['auto', 'auto']} />
+            <YAxis tickFormatter={(v) => {
+              if (hidden) return '•••';
+              if (currency === 'IDR') return `Rp${((v * usdToIdr) / 1_000_000).toFixed(0)}jt`;
+              return `$${(v / 1000).toFixed(0)}k`;
+            }} tick={{ fill: '#8b949e', fontSize: 11 }} tickLine={false} axisLine={false} width={72} domain={['auto', 'auto']} />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="benchmark" name="S&P 500"  stroke="#3fb950" strokeWidth={2}   fill="url(#benchGradient)" dot={false} activeDot={{ r: 5, strokeWidth: 0 }} />
             <Area type="monotone" dataKey="portfolio" name="Portfolio" stroke="#58a6ff" strokeWidth={2.5} fill="url(#portGradient)"  dot={false} activeDot={{ r: 6, strokeWidth: 0, fill: '#58a6ff' }} />

@@ -10,10 +10,12 @@ const Transaction   = require('../models/Transaction');
 const PriceCache    = require('../models/PriceCache');
 const LedgerAccount = require('../models/LedgerAccount');
 const JournalEntry  = require('../models/JournalEntry');
+const Settings      = require('../models/Settings');
 
-const rawHoldings    = require('../data/holdings');
+const rawHoldings     = require('../data/holdings');
 const rawTransactions = require('../data/transactions');
 const { accounts: rawAccounts, entries: rawEntries } = require('../data/ledger');
+const rawSettings     = require('../data/settings');
 
 async function seed() {
   await mongoose.connect(process.env.MONGODB_URI);
@@ -26,6 +28,7 @@ async function seed() {
     PriceCache.deleteMany({}),
     LedgerAccount.deleteMany({}),
     JournalEntry.deleteMany({}),
+    Settings.deleteMany({}),
   ]);
   console.log('Cleared existing collections');
 
@@ -71,6 +74,10 @@ async function seed() {
   }));
   await JournalEntry.insertMany(entries);
   console.log(`Inserted ${entries.length} journal entries`);
+
+  // ── Settings ──────────────────────────────────────────────────────────────
+  await Settings.insertMany(rawSettings);
+  console.log(`Inserted ${rawSettings.length} settings`);
 
   console.log('\nSeed complete.');
   await mongoose.disconnect();

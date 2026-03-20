@@ -1,6 +1,7 @@
 import React from 'react';
-import { fmtUSD, fmt }    from '../../../utils/formatters';
+import { fmt }            from '../../../utils/formatters';
 import { useHideNumbers } from '../../../context/HideNumbersContext';
+import { useCurrency }    from '../../../context/CurrencyContext';
 
 const MASK = '••••••';
 
@@ -19,7 +20,8 @@ function MiniBar({ pct, color }) {
 
 function LedgerSummary({ summary }) {
   const { hidden } = useHideNumbers();
-  const m = (v) => hidden ? MASK : fmtUSD(v);
+  const { fmtMoney } = useCurrency();
+  const m = (v) => hidden ? MASK : fmtMoney(v);
 
   const { totalIncome, totalExpenses, netIncome, totalAssets, totalLiabilities, totalEquity, netWorth, incomeBreakdown, expenseBreakdown, monthlyTrend } = summary;
   const isProfit = netIncome >= 0;
@@ -31,18 +33,18 @@ function LedgerSummary({ summary }) {
       <div className="ledger-kpi-grid">
         <div className="ledger-kpi card">
           <span className="kpi-label">Total Income</span>
-          <span className="kpi-value gain">{hidden ? MASK : `+${fmtUSD(totalIncome)}`}</span>
+          <span className="kpi-value gain">{hidden ? MASK : `+${fmtMoney(totalIncome)}`}</span>
           <span className="kpi-sub muted">YTD earnings</span>
         </div>
         <div className="ledger-kpi card">
           <span className="kpi-label">Total Expenses</span>
-          <span className="kpi-value loss">{hidden ? MASK : `-${fmtUSD(totalExpenses)}`}</span>
+          <span className="kpi-value loss">{hidden ? MASK : `-${fmtMoney(totalExpenses)}`}</span>
           <span className="kpi-sub muted">YTD spending</span>
         </div>
         <div className="ledger-kpi card">
           <span className="kpi-label">Net Income</span>
           <span className={`kpi-value ${isProfit ? 'gain' : 'loss'}`}>
-            {hidden ? MASK : `${isProfit ? '+' : ''}${fmtUSD(netIncome)}`}
+            {hidden ? MASK : `${isProfit ? '+' : ''}${fmtMoney(netIncome)}`}
           </span>
           <span className={`kpi-sub ${isProfit ? 'gain' : 'loss'}`}>
             {isProfit ? '▲' : '▼'} {savingsRate}% savings rate
@@ -95,7 +97,7 @@ function LedgerSummary({ summary }) {
           <h3 className="breakdown-title">Balance Sheet</h3>
           <div className="bs-section">
             <div className="bs-row bs-header"><span>Assets</span><span>{m(totalAssets)}</span></div>
-            <div className="bs-row"><span className="muted">Liabilities</span><span className="loss">{hidden ? MASK : `-${fmtUSD(totalLiabilities)}`}</span></div>
+            <div className="bs-row"><span className="muted">Liabilities</span><span className="loss">{hidden ? MASK : `-${fmtMoney(totalLiabilities)}`}</span></div>
             <div className="bs-row"><span className="muted">Equity</span><span>{m(totalEquity)}</span></div>
             <div className="bs-divider" />
             <div className="bs-row bs-total"><span>Net Worth</span><span className="gain">{m(netWorth)}</span></div>
@@ -123,9 +125,9 @@ function LedgerSummary({ summary }) {
                 return (
                   <tr key={mo.month}>
                     <td className="month-cell">{mo.month}</td>
-                    <td className="num gain">{hidden ? MASK : `+${fmtUSD(mo.income)}`}</td>
-                    <td className="num loss">{hidden ? MASK : `-${fmtUSD(mo.expenses)}`}</td>
-                    <td className="num"><span className={mo.netIncome >= 0 ? 'gain' : 'loss'}>{hidden ? MASK : `${mo.netIncome >= 0 ? '+' : ''}${fmtUSD(mo.netIncome)}`}</span></td>
+                    <td className="num gain">{hidden ? MASK : `+${fmtMoney(mo.income)}`}</td>
+                    <td className="num loss">{hidden ? MASK : `-${fmtMoney(mo.expenses)}`}</td>
+                    <td className="num"><span className={mo.netIncome >= 0 ? 'gain' : 'loss'}>{hidden ? MASK : `${mo.netIncome >= 0 ? '+' : ''}${fmtMoney(mo.netIncome)}`}</span></td>
                     <td className="num"><span className={rate >= 0 ? 'gain' : 'loss'}>{fmt(rate)}%</span></td>
                   </tr>
                 );

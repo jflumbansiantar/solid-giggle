@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useTransactions }       from '../../../hooks/useTransactions';
-import { fmt, fmtUSD, fmtDate }  from '../../../utils/formatters';
+import { fmt, fmtDate }          from '../../../utils/formatters';
 import { useHideNumbers }        from '../../../context/HideNumbersContext';
+import { useCurrency }           from '../../../context/CurrencyContext';
 import LoadingScreen             from '../../shared/LoadingScreen';
 import ErrorScreen               from '../../shared/ErrorScreen';
 import './Transactions.css';
@@ -11,6 +12,7 @@ const MASK = '••••••';
 function Transactions() {
   const { transactions, loading, error } = useTransactions();
   const { hidden } = useHideNumbers();
+  const { fmtMoney } = useCurrency();
   const [typeFilter, setTypeFilter] = useState('All');
 
   const filtered = useMemo(
@@ -27,7 +29,7 @@ function Transactions() {
   if (loading) return <LoadingScreen message="Loading transactions…" />;
   if (error)   return <ErrorScreen message={error} />;
 
-  const m = (v) => hidden ? MASK : fmtUSD(v);
+  const m = (v) => hidden ? MASK : fmtMoney(v);
 
   return (
     <div className="transactions-page">
@@ -47,12 +49,12 @@ function Transactions() {
 
       {/* Summary banner */}
       <div className="tx-summary card">
-        <div className="tx-sum-cell"><span className="tx-sum-label">Total Bought</span><span className="tx-sum-val gain">{hidden ? MASK : `+${fmtUSD(totals.buys)}`}</span></div>
-        <div className="tx-sum-cell"><span className="tx-sum-label">Total Sold</span><span className="tx-sum-val loss">{hidden ? MASK : `-${fmtUSD(totals.sells)}`}</span></div>
+        <div className="tx-sum-cell"><span className="tx-sum-label">Total Bought</span><span className="tx-sum-val gain">{hidden ? MASK : `+${fmtMoney(totals.buys)}`}</span></div>
+        <div className="tx-sum-cell"><span className="tx-sum-label">Total Sold</span><span className="tx-sum-val loss">{hidden ? MASK : `-${fmtMoney(totals.sells)}`}</span></div>
         <div className="tx-sum-cell">
           <span className="tx-sum-label">Net Cash Flow</span>
           <span className={`tx-sum-val ${totals.net >= 0 ? 'loss' : 'gain'}`}>
-            {hidden ? MASK : `${totals.net >= 0 ? '-' : '+'}${fmtUSD(Math.abs(totals.net))}`}
+            {hidden ? MASK : `${totals.net >= 0 ? '-' : '+'}${fmtMoney(Math.abs(totals.net))}`}
           </span>
         </div>
         <div className="tx-sum-cell"><span className="tx-sum-label">Transactions</span><span className="tx-sum-val">{filtered.length}</span></div>
@@ -82,7 +84,7 @@ function Transactions() {
                   </div>
                 </div>
                 <div className="tx-right">
-                  <span className={`tx-total ${isBuy ? 'loss' : 'gain'}`}>{hidden ? MASK : `${isBuy ? '-' : '+'}${fmtUSD(tx.total)}`}</span>
+                  <span className={`tx-total ${isBuy ? 'loss' : 'gain'}`}>{hidden ? MASK : `${isBuy ? '-' : '+'}${fmtMoney(tx.total)}`}</span>
                   <span className="tx-date muted">{fmtDate(tx.date)}</span>
                 </div>
               </div>

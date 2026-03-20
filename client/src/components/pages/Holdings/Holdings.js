@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { useHoldings }        from '../../../hooks/useHoldings';
-import { fmt, fmtUSD }        from '../../../utils/formatters';
+import { fmt }                from '../../../utils/formatters';
 import { TYPE_BADGE, MARKET_FLAG, MARKET_EXCHANGE } from '../../../constants/ui';
 import { useHideNumbers }     from '../../../context/HideNumbersContext';
+import { useCurrency }        from '../../../context/CurrencyContext';
 import LoadingScreen          from '../../shared/LoadingScreen';
 import ErrorScreen            from '../../shared/ErrorScreen';
 import SortIcon               from './SortIcon';
@@ -31,6 +32,7 @@ const MARKET_OPTIONS = [
 function Holdings() {
   const { holdings, loading, error } = useHoldings();
   const { hidden } = useHideNumbers();
+  const { fmtMoney } = useCurrency();
   const [typeFilter,   setTypeFilter]   = useState('All');
   const [marketFilter, setMarketFilter] = useState('All');
   const [sort, setSort] = useState({ col: 'marketValue', dir: 'desc' });
@@ -64,7 +66,7 @@ function Holdings() {
   if (loading) return <LoadingScreen message="Loading holdings…" />;
   if (error)   return <ErrorScreen message={error} />;
 
-  const m = (v) => hidden ? MASK : fmtUSD(v);
+  const m = (v) => hidden ? MASK : fmtMoney(v);
 
   return (
     <div className="holdings-page">
@@ -102,13 +104,13 @@ function Holdings() {
         <div className="total-cell">
           <span className="total-label">Total Gain / Loss</span>
           <span className={`total-val ${totals.totalGain >= 0 ? 'gain' : 'loss'}`}>
-            {hidden ? MASK : `${totals.totalGain >= 0 ? '+' : ''}${fmtUSD(totals.totalGain)}`}
+            {hidden ? MASK : `${totals.totalGain >= 0 ? '+' : ''}${fmtMoney(totals.totalGain)}`}
           </span>
         </div>
         <div className="total-cell">
           <span className="total-label">Day Gain / Loss</span>
           <span className={`total-val ${totals.totalDayGL >= 0 ? 'gain' : 'loss'}`}>
-            {hidden ? MASK : `${totals.totalDayGL >= 0 ? '+' : ''}${fmtUSD(totals.totalDayGL)}`}
+            {hidden ? MASK : `${totals.totalDayGL >= 0 ? '+' : ''}${fmtMoney(totals.totalDayGL)}`}
           </span>
         </div>
       </div>
@@ -144,7 +146,7 @@ function Holdings() {
                 <td className="num">{m(h.currentPrice)}</td>
                 <td className="num"><span className={h.dayChangePct >= 0 ? 'gain' : 'loss'}>{h.dayChangePct >= 0 ? '+' : ''}{fmt(h.dayChangePct)}%</span></td>
                 <td className="num bold">{m(h.marketValue)}</td>
-                <td className="num"><span className={h.gainLoss >= 0 ? 'gain' : 'loss'}>{hidden ? MASK : `${h.gainLoss >= 0 ? '+' : ''}${fmtUSD(h.gainLoss)}`}</span></td>
+                <td className="num"><span className={h.gainLoss >= 0 ? 'gain' : 'loss'}>{hidden ? MASK : `${h.gainLoss >= 0 ? '+' : ''}${fmtMoney(h.gainLoss)}`}</span></td>
                 <td className="num"><span className={`badge ${h.gainLossPct >= 0 ? 'badge-gain' : 'badge-loss'}`}>{h.gainLossPct >= 0 ? '+' : ''}{fmt(h.gainLossPct)}%</span></td>
               </tr>
             ))}

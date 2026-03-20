@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHideNumbers }  from '../../context/HideNumbersContext';
 import { useTheme }        from '../../context/ThemeContext';
+import { useCurrency }     from '../../context/CurrencyContext';
 import { getMarketStatus } from '../../utils/marketHours';
 import './Navbar.css';
 
@@ -28,8 +29,9 @@ function SunCloudIcon() {
 }
 
 function Navbar({ activeTab, onTabChange, tabs }) {
-  const { hidden, toggle }       = useHideNumbers();
-  const { isDark, toggleTheme }  = useTheme();
+  const { hidden, toggle }          = useHideNumbers();
+  const { isDark, toggleTheme }     = useTheme();
+  const { currency, toggleCurrency } = useCurrency();
   const [menuOpen, setMenuOpen]  = useState(false);
   const [markets,  setMarkets]   = useState(getMarketStatus());
 
@@ -73,6 +75,16 @@ function Navbar({ activeTab, onTabChange, tabs }) {
               </button>
             ))}
           </nav>
+
+          {/* Currency toggle */}
+          <button
+            className={`currency-toggle ${currency === 'USD' ? 'usd' : 'idr'}`}
+            onClick={toggleCurrency}
+            title={currency === 'USD' ? 'Switch to IDR (Rupiah)' : 'Switch to USD (Dollar)'}
+          >
+            <span className="currency-sign">{currency === 'USD' ? '$' : 'Rp'}</span>
+            <span className="currency-label">{currency}</span>
+          </button>
 
           {/* Theme toggle */}
           <button

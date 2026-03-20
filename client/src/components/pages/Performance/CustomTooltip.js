@@ -1,12 +1,13 @@
 import React from 'react';
-import { fmtUSDCompact }  from '../../../utils/formatters';
 import { useHideNumbers } from '../../../context/HideNumbersContext';
+import { useCurrency }    from '../../../context/CurrencyContext';
 
 const MASK = '••••••';
 
 function CustomTooltip({ active, payload, label }) {
   const { hidden } = useHideNumbers();
-  const mc = (v) => hidden ? MASK : fmtUSDCompact(v);
+  const { fmtMoneyCompact } = useCurrency();
+  const mc = (v) => hidden ? MASK : fmtMoneyCompact(v);
 
   if (!active || !payload || !payload.length) return null;
 
