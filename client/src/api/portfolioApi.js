@@ -24,6 +24,12 @@ export const fetchPriceCache  = ()       => axios.get('/api/price-cache').then((
 export const upsertPriceCache = (data)   => axios.post('/api/price-cache', data).then((r) => r.data);
 export const deletePriceCache = (ticker) => axios.delete(`/api/price-cache/${ticker}`).then((r) => r.data);
 
+// ── Debts CRUD ────────────────────────────────────────────────────────────
+export const fetchDebts  = ()         => axios.get('/api/debts').then((r) => r.data);
+export const createDebt  = (data)     => axios.post('/api/debts', data).then((r) => r.data);
+export const updateDebt  = (id, data) => axios.patch(`/api/debts/${id}`, data).then((r) => r.data);
+export const deleteDebt  = (id)       => axios.delete(`/api/debts/${id}`).then((r) => r.data);
+
 // ── Ledger Accounts CRUD ──────────────────────────────────────────────────────
 export const createLedgerAccount = (data)      => axios.post('/api/ledger/accounts', data).then((r) => r.data);
 export const updateLedgerAccount = (id, data)  => axios.patch(`/api/ledger/accounts/${id}`, data).then((r) => r.data);

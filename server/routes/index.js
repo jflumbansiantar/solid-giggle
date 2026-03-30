@@ -6,6 +6,7 @@ const performance  = require('./performance');
 const ledger       = require('./ledger');
 const prices       = require('./prices');
 const settings     = require('./settings');
+const debt         = require('./debt');
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use('/performance',  performance);
 router.use('/ledger',       ledger);
 router.use('/price-cache',  prices);
 router.use('/settings',     settings);
+router.use('/debts',        debt);
 
 module.exports = router;

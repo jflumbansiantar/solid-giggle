@@ -8,8 +8,8 @@ import Navbar           from './components/layout/Navbar';
 import BubbleBackground from './components/BubbleBackground';
 import Dashboard        from './components/pages/Dashboard/Dashboard';
 import Holdings         from './components/pages/Holdings/Holdings';
-import PerformanceChart from './components/pages/Performance/PerformanceChart';
 import TaxCalc          from './components/pages/TaxCalc/TaxCalc';
+import DebtPage         from './components/pages/Debt/DebtPage';
 import DataEntry        from './components/pages/DataEntry/DataEntry';
 
 function App() {
@@ -26,8 +26,8 @@ function App() {
       <main className="main-content">
         {activeTab === 'dashboard'    && <Dashboard />}
         {activeTab === 'holdings'     && <Holdings />}
-        {activeTab === 'performance'  && <PerformanceChart />}
         {activeTab === 'tax'          && <TaxCalc />}
+        {activeTab === 'debt'         && <DebtPage />}
         {activeTab === 'data-entry'   && <DataEntry />}
       </main>
     </div>

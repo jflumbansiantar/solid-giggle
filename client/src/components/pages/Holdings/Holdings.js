@@ -8,6 +8,7 @@ import { useCurrency }        from '../../../context/CurrencyContext';
 import LoadingScreen          from '../../shared/LoadingScreen';
 import ErrorScreen            from '../../shared/ErrorScreen';
 import SortIcon               from './SortIcon';
+import PerformanceChart       from '../Performance/PerformanceChart';
 import './Holdings.css';
 import '../Transactions/Transactions.css';
 
@@ -117,7 +118,7 @@ function Holdings() {
   const { hidden } = useHideNumbers();
   const { fmtMoney } = useCurrency();
 
-  const [view,         setView]         = useState('holdings'); // 'holdings' | 'transactions'
+  const [view,         setView]         = useState('holdings'); // 'holdings' | 'transactions' | 'performance'
   const [typeFilter,   setTypeFilter]   = useState('All');
   const [marketFilter, setMarketFilter] = useState('All');
   const [sort,         setSort]         = useState({ col: 'marketValue', dir: 'desc' });
@@ -158,11 +159,13 @@ function Holdings() {
       {/* Header row */}
       <div className="section-header" style={{ marginBottom: 12 }}>
         <div>
-          <h2 className="section-title">{view === 'holdings' ? 'Holdings' : 'Transactions'}</h2>
+          <h2 className="section-title">
+            {view === 'holdings' ? 'Portfolio' : view === 'transactions' ? 'Transactions' : 'Performance'}
+          </h2>
           <p className="section-subtitle">
             {view === 'holdings'
               ? `${holdings.length} positions · Sorted by ${sort.col}`
-              : 'Trade history'}
+              : view === 'transactions' ? 'Trade history' : 'Portfolio vs benchmark'}
           </p>
         </div>
         {view === 'holdings' && (
@@ -183,6 +186,7 @@ function Holdings() {
               key={opt.value}
               className={`filter-pill ${view === 'holdings' && marketFilter === opt.value ? 'active' : ''}`}
               onClick={() => { setView('holdings'); setMarketFilter(opt.value); }}
+
             >
               {opt.label}
             </button>
@@ -197,11 +201,20 @@ function Holdings() {
         >
           ↕ Transactions
         </button>
+
+        <button
+          className={`filter-pill filter-pill-tx ${view === 'performance' ? 'active' : ''}`}
+          onClick={() => setView(view === 'performance' ? 'holdings' : 'performance')}
+        >
+          ↗ Performance
+        </button>
       </div>
 
       {/* Content */}
       {view === 'transactions' ? (
         <TransactionsView hidden={hidden} fmtMoney={fmtMoney} />
+      ) : view === 'performance' ? (
+        <PerformanceChart />
       ) : (
         <>
           <div className="totals-banner card">

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { usePortfolio }        from '../../../hooks/usePortfolio';
+import { useDebt }             from '../../../hooks/useDebt';
 import { fmt }                 from '../../../utils/formatters';
 import { MARKET_FLAG }         from '../../../constants/ui';
 import { useHideNumbers }      from '../../../context/HideNumbersContext';
@@ -70,10 +71,26 @@ function RecentTxRow({ tx, hidden, fmtMoney }) {
   );
 }
 
+const DEBT_TYPE_COLORS = {
+  'Credit Card':   '#f87171',
+  'Personal Loan': '#fb923c',
+  'Mortgage':      '#60a5fa',
+  'Auto Loan':     '#a78bfa',
+  'Student Loan':  '#34d399',
+  'Other':         '#94a3b8',
+};
+
 function Dashboard() {
   const { portfolio, holdings, loading, error } = usePortfolio();
+  const { debts, loading: debtLoading } = useDebt();
   const { hidden } = useHideNumbers();
   const { fmtMoney } = useCurrency();
+
+  const debtSummary = useMemo(() => ({
+    total:      debts.reduce((s, d) => s + d.balance, 0),
+    minPayment: debts.reduce((s, d) => s + d.minimumPayment, 0),
+    highest:    debts.reduce((best, d) => (!best || d.interestRate > best.interestRate) ? d : best, null),
+  }), [debts]);
 
   if (loading) return <LoadingScreen message="Loading portfolio…" />;
   if (error)   return <ErrorScreen message={error} />;
@@ -192,6 +209,71 @@ function Dashboard() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ── Debt Section ── */}
+      <div className="dash-debt-row">
+
+        {/* Summary card */}
+        <div className="card dash-debt-summary">
+          <div className="section-header" style={{ marginBottom: 16 }}>
+            <h2 className="section-title">Debt Overview</h2>
+            <span className="muted" style={{ fontSize: 12 }}>{debts.length} account{debts.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div className="dash-debt-stats">
+            <div className="dash-debt-stat">
+              <span className="dash-debt-stat-label">Total Debt</span>
+              <span className="dash-debt-stat-value" style={{ color: '#f87171' }}>{hidden ? MASK : fmtMoney(debtSummary.total)}</span>
+            </div>
+            <div className="dash-debt-stat">
+              <span className="dash-debt-stat-label">Monthly Minimums</span>
+              <span className="dash-debt-stat-value">{hidden ? MASK : fmtMoney(debtSummary.minPayment)}</span>
+            </div>
+            <div className="dash-debt-stat">
+              <span className="dash-debt-stat-label">Highest Rate</span>
+              <span className="dash-debt-stat-value" style={{ color: '#fbbf24' }}>
+                {debtSummary.highest ? (hidden ? MASK : `${fmt(debtSummary.highest.interestRate, 2)}%`) : '—'}
+              </span>
+              {debtSummary.highest && (
+                <span className="dash-debt-stat-sub muted">{debtSummary.highest.name}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Debt list */}
+        <div className="card dash-debt-list-card">
+          <div className="section-header" style={{ marginBottom: 12 }}>
+            <h2 className="section-title">Debts</h2>
+          </div>
+          {debtLoading ? (
+            <span className="muted" style={{ fontSize: 13 }}>Loading…</span>
+          ) : debts.length === 0 ? (
+            <span className="muted" style={{ fontSize: 13 }}>No debts recorded.</span>
+          ) : (
+            <div className="dash-debt-list">
+              {debts.map((d) => (
+                <div key={d._id} className="dash-debt-item">
+                  <span
+                    className="dash-debt-type-dot"
+                    style={{ background: DEBT_TYPE_COLORS[d.type] || '#94a3b8' }}
+                  />
+                  <div className="dash-debt-item-info">
+                    <span className="dash-debt-name">{d.name}</span>
+                    <span className="dash-debt-type muted">{d.type}{d.debtApp ? ` · ${d.debtApp}` : ''}</span>
+                  </div>
+                  <div className="dash-debt-item-right">
+                    <span className="dash-debt-balance">{hidden ? MASK : fmtMoney(d.balance)}</span>
+                    <span className={`dash-debt-rate ${d.interestRate > 15 ? 'rate-high' : d.interestRate > 8 ? 'rate-mid' : 'rate-low'}`}>
+                      {hidden ? MASK : `${fmt(d.interestRate, 2)}%`}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
 
     </div>

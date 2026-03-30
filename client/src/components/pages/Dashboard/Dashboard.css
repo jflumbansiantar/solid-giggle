@@ -246,12 +246,119 @@
 .quick-right  { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 .quick-value  { font-size: 13px; font-weight: 600; color: var(--text-primary); }
 
+/* ── Debt Section ─────────────────────────────────────────────────────────── */
+.dash-debt-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.dash-debt-summary { display: flex; flex-direction: column; }
+
+.dash-debt-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.dash-debt-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.dash-debt-stat:last-child { border-bottom: none; padding-bottom: 0; }
+
+.dash-debt-stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.dash-debt-stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+}
+
+.dash-debt-stat-sub { font-size: 11px; }
+
+/* ── Debt list card ──────────────────────────────────────────────────────── */
+.dash-debt-list-card { display: flex; flex-direction: column; }
+.dash-debt-list { display: flex; flex-direction: column; gap: 2px; }
+
+.dash-debt-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+.dash-debt-item:hover { background: var(--bg-card-hover); }
+
+.dash-debt-type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dash-debt-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-debt-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-debt-type { font-size: 11px; }
+
+.dash-debt-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.dash-debt-balance {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f87171;
+}
+
+.dash-debt-rate {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.rate-high { color: #f87171; }
+.rate-mid  { color: #fbbf24; }
+.rate-low  { color: #3fb950; }
+
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .dash-hero   { flex-direction: column; align-items: flex-start; gap: 24px; padding: 28px; }
   .hero-right  { width: 100%; justify-content: flex-start; }
   .dash-row-b  { grid-template-columns: 1fr 1fr; }
   .recent-card { grid-column: span 2; }
+  .dash-debt-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 1000px) {

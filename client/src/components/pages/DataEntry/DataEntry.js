@@ -5,6 +5,7 @@ import TransactionForm  from './TransactionForm';
 import LedgerAccountForm from './LedgerAccountForm';
 import JournalEntryForm from './JournalEntryForm';
 import SettingForm      from './SettingForm';
+import DebtForm         from './DebtForm';
 import './DataEntry.css';
 
 const SECTIONS = [
@@ -13,6 +14,7 @@ const SECTIONS = [
   { id: 'tx',         label: 'Transactions'    },
   { id: 'accounts',   label: 'Ledger Accounts' },
   { id: 'entries',    label: 'Journal Entries' },
+  { id: 'debts',      label: 'Debts'           },
   { id: 'settings',   label: 'Settings'        },
 ];
 
@@ -46,6 +48,7 @@ function DataEntry() {
         {section === 'tx'       && <TransactionForm />}
         {section === 'accounts' && <LedgerAccountForm />}
         {section === 'entries'  && <JournalEntryForm />}
+        {section === 'debts'    && <DebtForm />}
         {section === 'settings' && <SettingForm />}
       </div>
     </div>

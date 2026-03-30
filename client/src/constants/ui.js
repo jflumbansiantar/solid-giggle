@@ -1,8 +1,8 @@
 export const TABS = [
   { id: 'dashboard',   label: 'Dashboard'     },
-  { id: 'holdings',    label: 'Holdings'      },
-  { id: 'performance', label: 'Performance'   },
+  { id: 'holdings',    label: 'Portfolio'     },
   { id: 'tax',         label: 'Tax Calc'      },
+  { id: 'debt',        label: 'Debt Tracker'  },
   { id: 'data-entry',  label: 'Data Entry'    },
 ];
 
