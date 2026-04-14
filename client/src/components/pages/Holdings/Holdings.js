@@ -116,7 +116,7 @@ function TransactionsView({ hidden, fmtMoney }) {
 function Holdings() {
   const { holdings, loading, error } = useHoldings();
   const { hidden } = useHideNumbers();
-  const { fmtMoney } = useCurrency();
+  const { fmtMoney, currency, usdToIdr } = useCurrency();
 
   const [view,         setView]         = useState('holdings'); // 'holdings' | 'transactions' | 'performance'
   const [typeFilter,   setTypeFilter]   = useState('All');
@@ -166,6 +166,9 @@ function Holdings() {
             {view === 'holdings'
               ? `${holdings.length} positions · Sorted by ${sort.col}`
               : view === 'transactions' ? 'Trade history' : 'Portfolio vs benchmark'}
+            {currency === 'IDR' && (
+              <span className="rate-note"> · 1 USD = Rp {usdToIdr.toLocaleString('id-ID')}</span>
+            )}
           </p>
         </div>
         {view === 'holdings' && (

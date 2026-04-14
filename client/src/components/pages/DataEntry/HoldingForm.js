@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { fetchHoldings, createHolding, updateHolding, deleteHolding } from '../../../api/portfolioApi';
 import { PencilIcon, TrashIcon } from './Icons';
+import { useCurrency } from '../../../context/CurrencyContext';
 
-const EMPTY = { ticker: '', name: '', type: 'Stock', market: 'US', shares: '', avgCost: '' };
+const MUTUAL_FUND_SUBTYPES = [
+  'Pasar Uang',
+  'Pendapatan Tetap',
+  'Campuran',
+  'Saham',
+  'Indeks',
+  'Syariah',
+];
+
+const EMPTY = { ticker: '', name: '', type: 'Stock', subType: '', market: 'US', shares: '', avgCost: '' };
 
 function HoldingForm() {
   const [form,      setForm]      = useState(EMPTY);
@@ -13,6 +23,8 @@ function HoldingForm() {
   const [saving,    setSaving]    = useState(false);
   const [status,    setStatus]    = useState(null);
   const [tick,      setTick]      = useState(0);
+  const [selected,  setSelected]  = useState(new Set());
+  const { fmtMoney, currency } = useCurrency();
 
   useEffect(() => {
     setLoading(true);
@@ -25,7 +37,7 @@ function HoldingForm() {
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleEdit = (h) => {
-    setForm({ ticker: h.ticker, name: h.name, type: h.type, market: h.market, shares: String(h.shares), avgCost: String(h.avgCost) });
+    setForm({ ticker: h.ticker, name: h.name, type: h.type, subType: h.subType || '', market: h.market, shares: String(h.shares), avgCost: String(h.avgCost) });
     setEditMode(true);
     setEditKey(h.ticker);
     setStatus(null);
@@ -44,10 +56,10 @@ function HoldingForm() {
     setStatus(null);
     try {
       if (editMode) {
-        await updateHolding(editKey, { name: form.name, type: form.type, market: form.market, shares: +form.shares, avgCost: +form.avgCost });
+        await updateHolding(editKey, { name: form.name, type: form.type, subType: form.type === 'Mutual Fund' ? form.subType : '', market: form.market, shares: +form.shares, avgCost: +form.avgCost });
         setStatus({ type: 'success', msg: `${editKey} updated.` });
       } else {
-        await createHolding({ ...form, shares: +form.shares, avgCost: +form.avgCost });
+        await createHolding({ ...form, subType: form.type === 'Mutual Fund' ? form.subType : '', shares: +form.shares, avgCost: +form.avgCost });
         setStatus({ type: 'success', msg: `${form.ticker.toUpperCase()} added.` });
       }
       setForm(EMPTY);
@@ -65,6 +77,28 @@ function HoldingForm() {
     if (!window.confirm(`Delete holding ${ticker}?`)) return;
     try {
       await deleteHolding(ticker);
+      setSelected((prev) => { const next = new Set(prev); next.delete(ticker); return next; });
+      if (editKey === ticker) handleCancel();
+      setTick((t) => t + 1);
+    } catch (err) {
+      setStatus({ type: 'error', msg: err.response?.data?.error || err.message });
+    }
+  };
+
+  const handleToggleSelect = (ticker) =>
+    setSelected((prev) => { const next = new Set(prev); next.has(ticker) ? next.delete(ticker) : next.add(ticker); return next; });
+
+  const allSelected = rows.length > 0 && rows.every((h) => selected.has(h.ticker));
+
+  const handleSelectAll = () =>
+    setSelected(allSelected ? new Set() : new Set(rows.map((h) => h.ticker)));
+
+  const handleDeleteSelected = async () => {
+    if (!window.confirm(`Delete ${selected.size} selected holding(s)?`)) return;
+    try {
+      await Promise.all([...selected].map((ticker) => deleteHolding(ticker)));
+      if (editKey && selected.has(editKey)) handleCancel();
+      setSelected(new Set());
       setTick((t) => t + 1);
     } catch (err) {
       setStatus({ type: 'error', msg: err.response?.data?.error || err.message });
@@ -92,7 +126,7 @@ function HoldingForm() {
             <div className="de-field">
               <label>Type</label>
               <select value={form.type} onChange={set('type')}>
-                <option>Stock</option><option>ETF</option><option>Crypto</option>
+                <option>Stock</option><option>ETF</option><option>Crypto</option><option>Mutual Fund</option>
               </select>
             </div>
             <div className="de-field">
@@ -103,13 +137,22 @@ function HoldingForm() {
               </select>
             </div>
           </div>
+          {form.type === 'Mutual Fund' && (
+            <div className="de-field">
+              <label>Reksa Dana Sub-Type</label>
+              <select value={form.subType} onChange={set('subType')}>
+                <option value="">— pilih jenis —</option>
+                {MUTUAL_FUND_SUBTYPES.map((st) => <option key={st} value={st}>{st}</option>)}
+              </select>
+            </div>
+          )}
           <div className="de-row">
             <div className="de-field">
               <label>Shares</label>
               <input type="number" value={form.shares} onChange={set('shares')} required min="0" step="any" placeholder="10" />
             </div>
             <div className="de-field">
-              <label>Avg Cost (USD)</label>
+              <label>Avg Cost ({currency})</label>
               <input type="number" value={form.avgCost} onChange={set('avgCost')} required min="0" step="any" placeholder="150.00" />
             </div>
           </div>
@@ -130,23 +173,39 @@ function HoldingForm() {
       <div className="de-list-card">
         <div className="de-list-header">
           <span className="de-list-title">Holdings</span>
-          <span className="de-count">{rows.length} records</span>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {selected.size > 0 && (
+              <button className="de-bulk-delete" onClick={handleDeleteSelected}>
+                Delete {selected.size} selected
+              </button>
+            )}
+            <span className="de-count">{rows.length} records</span>
+          </div>
         </div>
         {loading ? <p className="de-hint">Loading…</p> : (
           <div className="de-table-wrap">
             <table className="de-table">
               <thead>
-                <tr><th>Ticker</th><th>Name</th><th>Type</th><th>Market</th><th>Shares</th><th>Avg Cost</th><th></th></tr>
+                <tr>
+                  <th className="de-check-cell">
+                    <input type="checkbox" checked={allSelected} onChange={handleSelectAll} title="Select all" />
+                  </th>
+                  <th>Ticker</th><th>Name</th><th>Type</th><th>Sub-Type</th><th>Market</th><th>Shares</th><th>Avg Cost</th><th></th>
+                </tr>
               </thead>
               <tbody>
                 {rows.map((h) => (
-                  <tr key={h.ticker}>
+                  <tr key={h.ticker} className={selected.has(h.ticker) ? 'de-row-selected' : ''}>
+                    <td className="de-check-cell">
+                      <input type="checkbox" checked={selected.has(h.ticker)} onChange={() => handleToggleSelect(h.ticker)} />
+                    </td>
                     <td><strong>{h.ticker}</strong></td>
                     <td>{h.name}</td>
                     <td>{h.type}</td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{h.subType || <span style={{ color: 'var(--text-secondary)' }}>—</span>}</td>
                     <td>{h.market}</td>
                     <td>{h.shares}</td>
-                    <td>${h.avgCost}</td>
+                    <td>{fmtMoney(h.avgCost)}</td>
                     <td>
                       <div className="de-action-btns">
                         <button className="de-icon-btn edit" title="Edit" onClick={() => handleEdit(h)}><PencilIcon /></button>

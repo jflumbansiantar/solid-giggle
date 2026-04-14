@@ -11,6 +11,7 @@ import Holdings         from './components/pages/Holdings/Holdings';
 import TaxCalc          from './components/pages/TaxCalc/TaxCalc';
 import DebtPage         from './components/pages/Debt/DebtPage';
 import DataEntry        from './components/pages/DataEntry/DataEntry';
+import MarketPage       from './components/pages/Market/MarketPage';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -28,6 +29,7 @@ function App() {
         {activeTab === 'holdings'     && <Holdings />}
         {activeTab === 'tax'          && <TaxCalc />}
         {activeTab === 'debt'         && <DebtPage />}
+        {activeTab === 'market'       && <MarketPage />}
         {activeTab === 'data-entry'   && <DataEntry />}
       </main>
     </div>

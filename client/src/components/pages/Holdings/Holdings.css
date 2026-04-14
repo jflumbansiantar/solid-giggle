@@ -1,3 +1,6 @@
+/* ── Rate note ───────────────────────────────────────────────────────────── */
+.rate-note { color: var(--text-muted); font-size: 11px; }
+
 /* ── Filter pills ────────────────────────────────────────────────────────── */
 .type-filters { display: flex; gap: 8px; flex-wrap: wrap; }
 

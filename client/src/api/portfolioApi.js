@@ -24,6 +24,9 @@ export const fetchPriceCache  = ()       => axios.get('/api/price-cache').then((
 export const upsertPriceCache = (data)   => axios.post('/api/price-cache', data).then((r) => r.data);
 export const deletePriceCache = (ticker) => axios.delete(`/api/price-cache/${ticker}`).then((r) => r.data);
 
+// ── Market (live quotes) ──────────────────────────────────────────────────────
+export const fetchMarketQuotes = () => axios.get('/api/market/quotes').then((r) => r.data);
+
 // ── Debts CRUD ────────────────────────────────────────────────────────────
 export const fetchDebts  = ()         => axios.get('/api/debts').then((r) => r.data);
 export const createDebt  = (data)     => axios.post('/api/debts', data).then((r) => r.data);

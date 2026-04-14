@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLedgerAccounts, createLedgerAccount, updateLedgerAccount } from '../../../api/portfolioApi';
 import { PencilIcon } from './Icons';
+import { useCurrency } from '../../../context/CurrencyContext';
 
 const EMPTY = { _id: '', code: '', name: '', type: 'Asset', normalBalance: 'Debit', openingBalance: '0' };
 
@@ -13,6 +14,7 @@ function LedgerAccountForm() {
   const [saving,   setSaving]   = useState(false);
   const [status,   setStatus]   = useState(null);
   const [tick,     setTick]     = useState(0);
+  const { fmtMoney, currency } = useCurrency();
 
   useEffect(() => {
     setLoading(true);
@@ -104,7 +106,7 @@ function LedgerAccountForm() {
             </div>
           </div>
           <div className="de-field">
-            <label>Opening Balance (USD)</label>
+            <label>Opening Balance ({currency})</label>
             <input type="number" value={form.openingBalance} onChange={set('openingBalance')} step="any" placeholder="0" />
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -140,7 +142,7 @@ function LedgerAccountForm() {
                     <td>{a.name}</td>
                     <td>{a.type}</td>
                     <td style={{ color: 'var(--text-secondary)' }}>{a.normalBalance}</td>
-                    <td>${(a.openingBalance || 0).toLocaleString()}</td>
+                    <td>{fmtMoney(a.openingBalance || 0)}</td>
                     <td>
                       <div className="de-action-btns">
                         <button className="de-icon-btn edit" title="Edit" onClick={() => handleEdit(a)}><PencilIcon /></button>

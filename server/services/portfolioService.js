@@ -45,6 +45,9 @@ async function getPortfolioSummary() {
   // Recent transactions — normalise date to 'YYYY-MM-DD' string for frontend
   const recentTransactions = rawRecent.map((tx) => ({
     ...tx,
+    name: tx.name || tx.ticker,
+    ticker: tx.ticker || tx.name,
+    category: tx.category || 'STOCK',
     date: tx.date instanceof Date
       ? tx.date.toISOString().slice(0, 10)
       : tx.date,

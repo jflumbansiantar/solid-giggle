@@ -15,6 +15,7 @@ function JournalEntryForm() {
   const [saving,      setSaving]      = useState(false);
   const [status,      setStatus]      = useState(null);
   const [tick,        setTick]        = useState(0);
+  const [selected,    setSelected]    = useState(new Set());
 
   useEffect(() => {
     setLoading(true);
@@ -72,6 +73,26 @@ function JournalEntryForm() {
     if (!window.confirm(`Delete journal entry ${entryId}?`)) return;
     try {
       await deleteJournalEntry(entryId);
+      setSelected((prev) => { const next = new Set(prev); next.delete(entryId); return next; });
+      setTick((t) => t + 1);
+    } catch (err) {
+      setStatus({ type: 'error', msg: err.response?.data?.error || err.message });
+    }
+  };
+
+  const handleToggleSelect = (entryId) =>
+    setSelected((prev) => { const next = new Set(prev); next.has(entryId) ? next.delete(entryId) : next.add(entryId); return next; });
+
+  const allSelected = rows.length > 0 && rows.every((e) => selected.has(e._id));
+
+  const handleSelectAll = () =>
+    setSelected(allSelected ? new Set() : new Set(rows.map((e) => e._id)));
+
+  const handleDeleteSelected = async () => {
+    if (!window.confirm(`Delete ${selected.size} selected journal entr${selected.size === 1 ? 'y' : 'ies'}?`)) return;
+    try {
+      await Promise.all([...selected].map((entryId) => deleteJournalEntry(entryId)));
+      setSelected(new Set());
       setTick((t) => t + 1);
     } catch (err) {
       setStatus({ type: 'error', msg: err.response?.data?.error || err.message });
@@ -121,17 +142,32 @@ function JournalEntryForm() {
       <div className="de-list-card">
         <div className="de-list-header">
           <span className="de-list-title">Journal Entries</span>
-          <span className="de-count">{rows.length} records</span>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {selected.size > 0 && (
+              <button className="de-bulk-delete" onClick={handleDeleteSelected}>
+                Delete {selected.size} selected
+              </button>
+            )}
+            <span className="de-count">{rows.length} records</span>
+          </div>
         </div>
         {loading ? <p className="de-hint">Loading…</p> : (
           <div className="de-table-wrap">
             <table className="de-table">
               <thead>
-                <tr><th>ID</th><th>Date</th><th>Description</th><th>Lines</th><th></th></tr>
+                <tr>
+                  <th className="de-check-cell">
+                    <input type="checkbox" checked={allSelected} onChange={handleSelectAll} title="Select all" />
+                  </th>
+                  <th>ID</th><th>Date</th><th>Description</th><th>Lines</th><th></th>
+                </tr>
               </thead>
               <tbody>
                 {rows.map((entry) => (
-                  <tr key={entry._id}>
+                  <tr key={entry._id} className={selected.has(entry._id) ? 'de-row-selected' : ''}>
+                    <td className="de-check-cell">
+                      <input type="checkbox" checked={selected.has(entry._id)} onChange={() => handleToggleSelect(entry._id)} />
+                    </td>
                     <td><strong>{entry._id}</strong></td>
                     <td style={{ color: 'var(--text-secondary)' }}>{new Date(entry.date).toLocaleDateString()}</td>
                     <td>{entry.description}</td>

@@ -3,6 +3,7 @@ export const TABS = [
   { id: 'holdings',    label: 'Portfolio'     },
   { id: 'tax',         label: 'Tax Calc'      },
   { id: 'debt',        label: 'Debt Tracker'  },
+  { id: 'market',      label: 'Market'        },
   { id: 'data-entry',  label: 'Data Entry'    },
 ];
 
