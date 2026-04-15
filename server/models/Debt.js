@@ -12,6 +12,7 @@ const debtSchema = new mongoose.Schema({
   currency:       { type: String, enum: ['USD', 'IDR'], default: 'USD' },
   debtApp:        { type: mongoose.Schema.Types.Mixed, default: '' }, // primary type is String; Mixed allows other types to be stored
   notes:          { type: String, default: '' },
+  status:         { type: String, enum: ['Active', 'Lunas'], default: 'Active' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Debt', debtSchema);

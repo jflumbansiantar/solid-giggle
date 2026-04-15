@@ -18,3 +18,23 @@ export function TrashIcon() {
     </svg>
   );
 }
+
+export function CheckIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+export function RefreshIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 12A10 10 0 1 1 12 22 10 10 0 0 1 2 12z" />
+      {/* this is just a quick circular arrow representation, maybe use proper one */}
+      <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.53-10.81l5.67-5.67" />
+    </svg>
+  );
+}

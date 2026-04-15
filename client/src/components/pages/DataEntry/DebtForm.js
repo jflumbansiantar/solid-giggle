@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDebts, createDebt, updateDebt, deleteDebt } from '../../../api/portfolioApi';
-import { PencilIcon, TrashIcon } from './Icons';
+import { PencilIcon, TrashIcon, CheckIcon, RefreshIcon } from './Icons';
 import { fmtIDR, fmt } from '../../../utils/formatters';
 
 const DEBT_TYPES = ['Credit Card', 'Personal Loan', 'Mortgage', 'Auto Loan', 'Student Loan', 'Other'];
@@ -9,7 +9,7 @@ const EMPTY = {
   name: '', type: 'Personal Loan', balance: '',
   monthlyInterestRate: '', interestRate: '',
   tenor: '', minimumPayment: '', dueDay: '1',
-  currency: 'IDR', debtApp: '', notes: '',
+  currency: 'IDR', debtApp: '', notes: '', status: 'Active',
 };
 
 // EAR: (1 + r_monthly / 100)^12 - 1
@@ -73,6 +73,7 @@ function DebtForm() {
       currency:            d.currency,
       debtApp:             d.debtApp || '',
       notes:               d.notes || '',
+      status:              d.status || 'Active',
     });
     setEditMode(true);
     setEditId(d._id);
@@ -98,6 +99,7 @@ function DebtForm() {
       tenor:               form.tenor !== '' ? +form.tenor : null,
       minimumPayment:      +form.minimumPayment,
       dueDay:              +form.dueDay,
+      status:              form.status,
     };
     try {
       if (editMode) {
@@ -132,6 +134,16 @@ function DebtForm() {
 
   const handleToggleSelect = (id) =>
     setSelected((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+
+  const handleToggleStatus = async (d) => {
+    try {
+      const payload = { status: d.status === 'Lunas' ? 'Active' : 'Lunas' };
+      await updateDebt(d._id, payload);
+      setTick((t) => t + 1);
+    } catch (err) {
+      setStatus({ type: 'error', msg: err.response?.data?.error || err.message });
+    }
+  };
 
   const allSelected = rows.length > 0 && rows.every((d) => selected.has(d._id));
 
@@ -264,7 +276,7 @@ function DebtForm() {
                   <th className="de-check-cell">
                     <input type="checkbox" checked={allSelected} onChange={handleSelectAll} title="Select all" />
                   </th>
-                  <th>Name</th><th>Type</th><th>Balance</th><th>Bln %</th><th>EAR %</th><th>Tenor</th><th>Cicilan</th><th>Jatuh Tempo</th><th>Debt App</th><th></th>
+                  <th>Name</th><th>Type</th><th>Status</th><th>Balance</th><th>Bln %</th><th>EAR %</th><th>Tenor</th><th>Cicilan</th><th>Jatuh Tempo</th><th>Debt App</th><th></th>
                 </tr>
               </thead>
               <tbody>
@@ -275,6 +287,11 @@ function DebtForm() {
                     </td>
                     <td><strong>{d.name}</strong></td>
                     <td>{d.type}</td>
+                    <td>
+                      <span className="de-badge" style={{ backgroundColor: d.status === 'Lunas' ? 'var(--emerald-900)' : 'var(--zinc-800)', color: d.status === 'Lunas' ? 'var(--emerald-400)' : 'var(--zinc-300)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>
+                        {d.status === 'Lunas' ? 'LUNAS' : 'ACTIVE'}
+                      </span>
+                    </td>
                     <td>{fmtIDR(d.balance)}</td>
                     <td>{d.monthlyInterestRate != null ? `${fmt(d.monthlyInterestRate, 2)}%` : '—'}</td>
                     <td>{fmt(d.interestRate, 2)}%</td>
@@ -284,6 +301,9 @@ function DebtForm() {
                     <td>{d.debtApp || <span style={{ color: 'var(--text-secondary)' }}>—</span>}</td>
                     <td>
                       <div className="de-action-btns">
+                        <button className="de-icon-btn status-btn" title={d.status === 'Lunas' ? 'Mark as Active' : 'Mark as Lunas'} onClick={() => handleToggleStatus(d)} style={{ color: d.status === 'Lunas' ? 'var(--zinc-400)' : 'var(--emerald-400)' }}>
+                          {d.status === 'Lunas' ? <RefreshIcon /> : <CheckIcon />}
+                        </button>
                         <button className="de-icon-btn edit" title="Edit" onClick={() => handleEdit(d)}><PencilIcon /></button>
                         <button className="de-icon-btn delete" title="Delete" onClick={() => handleDelete(d._id, d.name)}><TrashIcon /></button>
                       </div>

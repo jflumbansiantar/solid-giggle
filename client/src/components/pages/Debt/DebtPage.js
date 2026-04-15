@@ -165,10 +165,10 @@ function DebtPage() {
                 const months          = monthsToPayoff(d.balance, d.interestRate, d.minimumPayment);
                 const monthlyInterest = d.balance * (d.interestRate / 100 / 12);
                 
-                const isPaid = d.balance <= 0;
+                const isPaid = d.status === 'Lunas' || d.balance <= 0;
                 let payoffLabel;
                 if (isPaid) {
-                  payoffLabel = '0 bulan';
+                  payoffLabel = 'Lunas';
                 } else if (months === null) {
                   payoffLabel = <span className="debt-never">Never</span>;
                 } else if (months > 120) {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { fetchTransactions, createTransaction, deleteTransaction } from '../../../api/portfolioApi';
+import { fetchTransactions, createTransaction, deleteTransaction, fetchDebts } from '../../../api/portfolioApi';
 import { TrashIcon } from './Icons';
 import { useCurrency } from '../../../context/CurrencyContext';
+import { fmtIDR } from '../../../utils/formatters';
 
 const today = () => new Date().toISOString().slice(0, 10);
 const EMPTY  = { date: today(), category: 'STOCK', name: '', type: 'BUY', market: 'US', shares: '', price: '', total: '' };
@@ -10,6 +11,7 @@ function TransactionForm() {
   const [form,     setForm]    = useState(EMPTY);
   const [batch,    setBatch]   = useState([]);
   const [rows,     setRows]    = useState([]);
+  const [debts,    setDebts]   = useState([]);
   const [loading,  setLoading] = useState(true);
   const [saving,   setSaving]  = useState(false);
   const [status,   setStatus]  = useState(null);
@@ -23,6 +25,10 @@ function TransactionForm() {
       .then(setRows)
       .catch(() => setStatus({ type: 'error', msg: 'Failed to load transactions.' }))
       .finally(() => setLoading(false));
+      
+    fetchDebts()
+      .then(setDebts)
+      .catch(console.error);
   }, [tick]);
 
   const set = (field) => (e) => {
@@ -44,7 +50,7 @@ function TransactionForm() {
     else if (cat === 'INCOME') type = 'SALARY';
     else if (cat === 'EXPENSE') type = 'BILL';
     
-    setForm((f) => ({ ...EMPTY, date: f.date, category: cat, type }));
+    setForm((f) => ({ ...EMPTY, date: f.date, category: cat, type, name: '' }));
   };
 
   const handleAddToBatch = (e) => {
@@ -150,7 +156,16 @@ function TransactionForm() {
                  form.category === 'INCOME' ? 'Source of Income' :
                  'Expense Name'}
               </label>
-              <input value={form.name} onChange={set('name')} required placeholder={form.category === 'STOCK' ? 'AAPL' : 'KTA BCA'} />
+              {form.category === 'DEBT' ? (
+                <select value={form.name} onChange={set('name')} required>
+                  <option value="" disabled>Select Debt</option>
+                  {debts.map(d => (
+                    <option key={d._id} value={d.name}>{d.name}</option>
+                  ))}
+                </select>
+              ) : (
+                <input value={form.name} onChange={set('name')} required placeholder={form.category === 'STOCK' ? 'AAPL' : 'KTA BCA'} />
+              )}
             </div>
             <div className="de-field">
               <label>Type / Logic</label>
@@ -203,7 +218,7 @@ function TransactionForm() {
               </div>
             )}
             <div className="de-field">
-              <label>Total / Amount ({currency})</label>
+              <label>Total / Amount ({form.category === 'STOCK' ? currency : 'IDR'})</label>
               <input type="number" value={form.total} onChange={set('total')} required step="any" placeholder="1500.00" />
             </div>
           </div>
@@ -242,7 +257,7 @@ function TransactionForm() {
                         {tx.type}
                       </span>
                     </td>
-                    <td>{fmtMoney(tx.total)}</td>
+                    <td>{tx.category === 'STOCK' ? fmtMoney(tx.total) : fmtIDR(tx.total)}</td>
                     <td>
                       <div className="de-action-btns">
                         <button className="de-icon-btn delete" title="Remove from batch" onClick={() => handleRemoveFromBatch(idx)}>
@@ -301,7 +316,7 @@ function TransactionForm() {
                           {tx.type}
                         </span>
                       </td>
-                      <td>{fmtMoney(tx.total)}</td>
+                      <td>{tx.category === 'STOCK' ? fmtMoney(tx.total) : fmtIDR(tx.total)}</td>
                       <td>
                         <div className="de-action-btns">
                           <button className="de-icon-btn delete" title="Delete"
