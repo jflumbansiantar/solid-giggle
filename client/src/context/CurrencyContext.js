@@ -38,8 +38,14 @@ export function CurrencyProvider({ children }) {
     return fmtUSDCompact(n);
   }, [currency, usdToIdr]);
 
+  // Format without conversion — just apply currency symbol to the raw value
+  const fmtRaw = useCallback((n) => {
+    if (currency === 'IDR') return fmtIDR(n);
+    return fmtUSD(n);
+  }, [currency]);
+
   return (
-    <CurrencyContext.Provider value={{ currency, usdToIdr, toggleCurrency, fmtMoney, fmtMoneyCompact }}>
+    <CurrencyContext.Provider value={{ currency, usdToIdr, toggleCurrency, fmtMoney, fmtMoneyCompact, fmtRaw }}>
       {children}
     </CurrencyContext.Provider>
   );

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { fetchTransactions, createTransaction, deleteTransaction, fetchDebts } from '../../../api/portfolioApi';
 import { TrashIcon } from './Icons';
 import { useCurrency } from '../../../context/CurrencyContext';
-import { fmtIDR } from '../../../utils/formatters';
 
 const today = () => new Date().toISOString().slice(0, 10);
 const EMPTY  = { date: today(), category: 'STOCK', name: '', type: 'BUY', market: 'US', shares: '', price: '', total: '' };
@@ -17,7 +16,7 @@ function TransactionForm() {
   const [status,   setStatus]  = useState(null);
   const [tick,     setTick]    = useState(0);
   const [selected, setSelected] = useState(new Set());
-  const { fmtMoney, currency } = useCurrency();
+  const { fmtRaw, currency } = useCurrency();
 
   useEffect(() => {
     setLoading(true);
@@ -218,7 +217,7 @@ function TransactionForm() {
               </div>
             )}
             <div className="de-field">
-              <label>Total / Amount ({form.category === 'STOCK' ? currency : 'IDR'})</label>
+              <label>Total / Amount ({currency})</label>
               <input type="number" value={form.total} onChange={set('total')} required step="any" placeholder="1500.00" />
             </div>
           </div>
@@ -257,7 +256,7 @@ function TransactionForm() {
                         {tx.type}
                       </span>
                     </td>
-                    <td>{tx.category === 'STOCK' ? fmtMoney(tx.total) : fmtIDR(tx.total)}</td>
+                    <td>{fmtRaw(tx.total)}</td>
                     <td>
                       <div className="de-action-btns">
                         <button className="de-icon-btn delete" title="Remove from batch" onClick={() => handleRemoveFromBatch(idx)}>
@@ -316,7 +315,7 @@ function TransactionForm() {
                           {tx.type}
                         </span>
                       </td>
-                      <td>{tx.category === 'STOCK' ? fmtMoney(tx.total) : fmtIDR(tx.total)}</td>
+                      <td>{fmtRaw(tx.total)}</td>
                       <td>
                         <div className="de-action-btns">
                           <button className="de-icon-btn delete" title="Delete"

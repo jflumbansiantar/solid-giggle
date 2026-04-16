@@ -13,7 +13,7 @@ function PriceCacheForm() {
   const [status,   setStatus]  = useState(null);
   const [tick,     setTick]    = useState(0);
   const [selected, setSelected] = useState(new Set());
-  const { fmtMoney, currency } = useCurrency();
+  const { fmtRaw, currency } = useCurrency();
 
   useEffect(() => {
     setLoading(true);
@@ -137,8 +137,8 @@ function PriceCacheForm() {
                       <input type="checkbox" checked={selected.has(p.ticker)} onChange={() => handleToggleSelect(p.ticker)} />
                     </td>
                     <td><strong>{p.ticker}</strong></td>
-                    <td>{fmtMoney(p.currentPrice)}</td>
-                    <td>{fmtMoney(p.previousClose)}</td>
+                    <td>{fmtRaw(p.currentPrice)}</td>
+                    <td>{fmtRaw(p.previousClose)}</td>
                     <td style={{ color: 'var(--text-secondary)' }}>{new Date(p.updatedAt).toLocaleDateString()}</td>
                     <td>
                       <div className="de-action-btns">

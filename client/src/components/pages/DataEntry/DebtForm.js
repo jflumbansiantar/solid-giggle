@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDebts, createDebt, updateDebt, deleteDebt } from '../../../api/portfolioApi';
 import { PencilIcon, TrashIcon, CheckIcon, RefreshIcon } from './Icons';
-import { fmtIDR, fmt } from '../../../utils/formatters';
+import { useCurrency } from '../../../context/CurrencyContext';
+import { fmt } from '../../../utils/formatters';
 
 const DEBT_TYPES = ['Credit Card', 'Personal Loan', 'Mortgage', 'Auto Loan', 'Student Loan', 'Other'];
 
@@ -36,6 +37,7 @@ function DebtForm() {
   const [status,   setStatus]   = useState(null);
   const [tick,     setTick]     = useState(0);
   const [selected, setSelected] = useState(new Set());
+  const { fmtRaw, currency } = useCurrency();
 
   useEffect(() => {
     setLoading(true);
@@ -186,7 +188,7 @@ function DebtForm() {
           </div>
           <div className="de-row">
             <div className="de-field">
-              <label>Current Balance (IDR)</label>
+              <label>Current Balance ({currency})</label>
               <input type="number" value={form.balance} onChange={set('balance')} required min="0" step="any" placeholder="50000000" />
             </div>
             <div className="de-field">
@@ -224,7 +226,7 @@ function DebtForm() {
           </div>
           <div className="de-row">
             <div className="de-field">
-              <label>Cicilan / Minimum Payment (IDR)</label>
+              <label>Cicilan / Minimum Payment ({currency})</label>
               <input type="number" value={form.minimumPayment} onChange={set('minimumPayment')} required min="0" step="any" placeholder="2500000" />
             </div>
             <div className="de-field">
@@ -292,11 +294,11 @@ function DebtForm() {
                         {d.status === 'Lunas' ? 'LUNAS' : 'ACTIVE'}
                       </span>
                     </td>
-                    <td>{fmtIDR(d.balance)}</td>
+                    <td>{fmtRaw(d.balance)}</td>
                     <td>{d.monthlyInterestRate != null ? `${fmt(d.monthlyInterestRate, 2)}%` : '—'}</td>
                     <td>{fmt(d.interestRate, 2)}%</td>
                     <td>{d.tenor != null ? `${d.tenor} bln` : '—'}</td>
-                    <td>{fmtIDR(d.minimumPayment)}</td>
+                    <td>{fmtRaw(d.minimumPayment)}</td>
                     <td>{d.dueDay}</td>
                     <td>{d.debtApp || <span style={{ color: 'var(--text-secondary)' }}>—</span>}</td>
                     <td>

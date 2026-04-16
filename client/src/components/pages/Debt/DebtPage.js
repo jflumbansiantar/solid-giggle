@@ -61,6 +61,8 @@ function DebtPage() {
   const summary = useMemo(() => {
     const totalBalance    = debts.reduce((s, d) => s + d.balance, 0);
     const totalMinPayment = debts.reduce((s, d) => s + d.minimumPayment, 0);
+    const totalPaidAll    = debts.reduce((s, d) => s + (d.totalPaid || 0), 0);
+    const totalMonthsPaid = debts.reduce((s, d) => s + (d.monthsPaid || 0), 0);
     const avgRate         = debts.length
       ? debts.reduce((s, d) => s + d.interestRate, 0) / debts.length
       : 0;
@@ -69,7 +71,7 @@ function DebtPage() {
       const interest = totalInterestCost(d.balance, d.interestRate, d.minimumPayment);
       return s + (interest ?? 0);
     }, 0);
-    return { totalBalance, totalMinPayment, avgRate, highest, totalInterest };
+    return { totalBalance, totalMinPayment, totalPaidAll, totalMonthsPaid, avgRate, highest, totalInterest };
   }, [debts]);
 
   if (loading) return <LoadingScreen message="Loading debts…" />;
@@ -120,6 +122,12 @@ function DebtPage() {
           sub="at minimum payments"
           color="#f87171"
         />
+        <StatCard
+          label="Total Sudah Dibayar"
+          value={m(summary.totalPaidAll)}
+          sub={`${summary.totalMonthsPaid} kali pembayaran`}
+          color="#3fb950"
+        />
       </div>
 
       {/* ── Type filter pills ── */}
@@ -155,6 +163,8 @@ function DebtPage() {
                 <th className="num">Tenor</th>
                 <th className="num">Cicilan</th>
                 <th className="num">Jatuh Tempo</th>
+                <th className="num">Sudah Dibayar</th>
+                <th className="num">Bulan Berjalan</th>
                 <th className="num">Sisa Pembayaran</th>
                 <th className="num">Bunga/Bln</th>
                 <th className="num">Total Bunga</th>
@@ -178,6 +188,13 @@ function DebtPage() {
                 }
 
                 const totalInterest = totalInterestCost(d.balance, d.interestRate, d.minimumPayment);
+
+                // Payment progress from transactions
+                const paid       = d.totalPaid  || 0;
+                const paidMonths = d.monthsPaid  || 0;
+                const tenor      = d.tenor       || 0;
+                // Progress percentage: monthsPaid / tenor
+                const progressPct = tenor > 0 ? Math.min((paidMonths / tenor) * 100, 100) : 0;
 
                 return (
                   <tr key={d._id}>
@@ -214,6 +231,20 @@ function DebtPage() {
                     <td className="num muted">{d.tenor != null ? `${d.tenor} bln` : '—'}</td>
                     <td className="num">{m(d.minimumPayment)}</td>
                     <td className="num muted">{d.dueDay}</td>
+                    <td className="num" style={{ color: '#3fb950' }}>{m(paid)}</td>
+                    <td className="num">
+                      <div className="debt-progress-cell">
+                        <span>{paidMonths}{tenor > 0 ? ` / ${tenor}` : ''} bln</span>
+                        {tenor > 0 && (
+                          <div className="debt-progress-bar">
+                            <div
+                              className="debt-progress-fill"
+                              style={{ width: `${progressPct}%` }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </td>
                     <td className="num">{hidden ? MASK : payoffLabel}</td>
                     <td className="num debt-interest">{m(monthlyInterest)}</td>
                     <td className="num debt-interest">
@@ -232,8 +263,12 @@ function DebtPage() {
                 <td colSpan={2} className="num muted">{hidden ? MASK : `${fmt(summary.avgRate, 2)}% avg EAR`}</td>
                 <td></td>
                 <td className="num bold">{m(summary.totalMinPayment)}</td>
-                <td colSpan={3}></td>
+                <td></td>
+                <td className="num bold" style={{ color: '#3fb950' }}>{m(summary.totalPaidAll)}</td>
+                <td className="num muted">{summary.totalMonthsPaid} pembayaran</td>
+                <td colSpan={1}></td>
                 <td className="num bold debt-interest">{m(summary.totalInterest)}</td>
+                <td></td>
               </tr>
             </tfoot>
           </table>
