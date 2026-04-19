@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { usePortfolio }        from '../../../hooks/usePortfolio';
 import { useDebt }             from '../../../hooks/useDebt';
-import { fmt, fmtIDR }         from '../../../utils/formatters';
+import { fmt }                  from '../../../utils/formatters';
 import { MARKET_FLAG }         from '../../../constants/ui';
 import { useHideNumbers }      from '../../../context/HideNumbersContext';
 import { useCurrency }         from '../../../context/CurrencyContext';
@@ -78,11 +78,15 @@ function Dashboard() {
   const { hidden } = useHideNumbers();
   const { fmtMoney, currency, usdToIdr } = useCurrency();
 
-  const debtSummary = useMemo(() => ({
-    total:      debts.reduce((s, d) => s + d.balance, 0),
-    minPayment: debts.reduce((s, d) => s + d.minimumPayment, 0),
-    highest:    debts.reduce((best, d) => (!best || d.interestRate > best.interestRate) ? d : best, null),
-  }), [debts]);
+  const debtSummary = useMemo(() => {
+    const toUSD = (d) => d.currency === 'IDR' ? (d.balance || 0) / usdToIdr : (d.balance || 0);
+    const minToUSD = (d) => d.currency === 'IDR' ? (d.minimumPayment || 0) / usdToIdr : (d.minimumPayment || 0);
+    return {
+      total:      debts.reduce((s, d) => s + toUSD(d), 0),
+      minPayment: debts.reduce((s, d) => s + minToUSD(d), 0),
+      highest:    debts.reduce((best, d) => (!best || d.interestRate > best.interestRate) ? d : best, null),
+    };
+  }, [debts, usdToIdr]);
 
   const debtGroups = useMemo(() => {
     const map = new Map();
@@ -129,7 +133,7 @@ function Dashboard() {
             <div className="hero-net-worth">
               <span className="hero-nw-label">Total Debt</span>
               <span className="hero-nw-value loss">
-                {hidden ? MASK : fmtIDR(debtSummary.total)}
+                {m(debtSummary.total)}
               </span>
             </div>
           )}
@@ -241,11 +245,11 @@ function Dashboard() {
           <div className="dash-debt-stats">
             <div className="dash-debt-stat">
               <span className="dash-debt-stat-label">Total Debt</span>
-              <span className="dash-debt-stat-value" style={{ color: '#f87171' }}>{hidden ? MASK : fmtIDR(debtSummary.total)}</span>
+              <span className="dash-debt-stat-value" style={{ color: '#f87171' }}>{m(debtSummary.total)}</span>
             </div>
             <div className="dash-debt-stat">
               <span className="dash-debt-stat-label">Monthly Minimums</span>
-              <span className="dash-debt-stat-value">{hidden ? MASK : fmtIDR(debtSummary.minPayment)}</span>
+              <span className="dash-debt-stat-value">{m(debtSummary.minPayment)}</span>
             </div>
             <div className="dash-debt-stat">
               <span className="dash-debt-stat-label">Highest Rate</span>
@@ -271,7 +275,7 @@ function Dashboard() {
           ) : (
             <div className="dash-debt-list">
               {debtGroups.map(([appName, items]) => {
-                const groupTotal = items.reduce((s, d) => s + d.balance, 0);
+                const groupTotal = items.reduce((s, d) => s + (d.currency === 'IDR' ? (d.balance || 0) / usdToIdr : (d.balance || 0)), 0);
                 const count = items.length;
                 return (
                   <div key={appName} className="dash-debt-item">
@@ -280,7 +284,7 @@ function Dashboard() {
                       <span className="dash-debt-type muted">{count} debt{count !== 1 ? 's' : ''}</span>
                     </div>
                     <div className="dash-debt-item-right">
-                      <span className="dash-debt-balance">{hidden ? MASK : fmtIDR(groupTotal)}</span>
+                      <span className="dash-debt-balance">{m(groupTotal)}</span>
                     </div>
                   </div>
                 );

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import './App.css';
+import { AuthProvider }        from './context/AuthContext';
 import { HideNumbersProvider } from './context/HideNumbersContext';
 import { ThemeProvider }       from './context/ThemeContext';
 import { CurrencyProvider }    from './context/CurrencyContext';
+import { useAuth }      from './context/AuthContext';
 import { TABS }         from './constants/ui';
 import Navbar           from './components/layout/Navbar';
 import BubbleBackground from './components/BubbleBackground';
@@ -12,9 +14,13 @@ import TaxCalc          from './components/pages/TaxCalc/TaxCalc';
 import DebtPage         from './components/pages/Debt/DebtPage';
 import DataEntry        from './components/pages/DataEntry/DataEntry';
 import MarketPage       from './components/pages/Market/MarketPage';
+import Login            from './components/pages/Login/Login';
 
-function App() {
+function AppContent() {
+  const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  if (!isAuthenticated) return <Login />;
 
   return (
     <ThemeProvider>
@@ -36,6 +42,14 @@ function App() {
     </HideNumbersProvider>
     </CurrencyProvider>
     </ThemeProvider>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

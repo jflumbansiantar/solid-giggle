@@ -16,7 +16,8 @@ function TransactionForm() {
   const [status,   setStatus]  = useState(null);
   const [tick,     setTick]    = useState(0);
   const [selected, setSelected] = useState(new Set());
-  const { fmtRaw, currency } = useCurrency();
+  const { fmtMoney, fmtRaw, currency, usdToIdr } = useCurrency();
+  const fmtTx = (tx) => fmtMoney(tx.market === 'US' ? tx.total : tx.total / usdToIdr);
 
   useEffect(() => {
     setLoading(true);
@@ -256,7 +257,7 @@ function TransactionForm() {
                         {tx.type}
                       </span>
                     </td>
-                    <td>{fmtRaw(tx.total)}</td>
+                    <td>{fmtTx(tx)}</td>
                     <td>
                       <div className="de-action-btns">
                         <button className="de-icon-btn delete" title="Remove from batch" onClick={() => handleRemoveFromBatch(idx)}>
@@ -315,7 +316,7 @@ function TransactionForm() {
                           {tx.type}
                         </span>
                       </td>
-                      <td>{fmtRaw(tx.total)}</td>
+                      <td>{fmtTx(tx)}</td>
                       <td>
                         <div className="de-action-btns">
                           <button className="de-icon-btn delete" title="Delete"

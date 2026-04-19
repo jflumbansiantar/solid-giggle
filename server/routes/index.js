@@ -1,4 +1,6 @@
-const express      = require('express');
+const express        = require('express');
+const authMiddleware = require('../middleware/auth');
+const auth         = require('./auth');
 const holdings     = require('./holdings');
 const portfolio    = require('./portfolio');
 const transactions = require('./transactions');
@@ -10,6 +12,12 @@ const debt         = require('./debt');
 const market       = require('./market');
 
 const router = express.Router();
+
+// Public route — no auth required
+router.use('/auth', auth);
+
+// All routes below require a valid JWT
+router.use(authMiddleware);
 
 router.use('/holdings',     holdings);
 router.use('/portfolio',    portfolio);

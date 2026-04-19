@@ -231,6 +231,26 @@
 .hide-toggle:hover  { border-color: var(--border-light); color: var(--text-primary); }
 .hide-toggle.active { background: rgba(88,166,255,0.12); border-color: var(--accent); color: var(--accent); }
 
+/* ── Logout button ───────────────────────────────────────────────────────── */
+.logout-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  transition: all var(--transition);
+}
+.logout-btn:hover {
+  border-color: #f87171;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
 /* ── Hamburger button ────────────────────────────────────────────────────── */
 .hamburger {
   display: none;

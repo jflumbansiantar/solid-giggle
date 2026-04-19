@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { useDebt }       from '../../../hooks/useDebt';
+import { useDebt }        from '../../../hooks/useDebt';
 import { useHideNumbers } from '../../../context/HideNumbersContext';
+import { useCurrency }    from '../../../context/CurrencyContext';
 import LoadingScreen      from '../../shared/LoadingScreen';
 import ErrorScreen        from '../../shared/ErrorScreen';
-import { fmt, fmtIDR }   from '../../../utils/formatters';
+import { fmt }            from '../../../utils/formatters';
 import './DebtPage.css';
 
 const MASK = '••••••';
@@ -27,7 +28,6 @@ function StatCard({ label, value, sub, color }) {
   );
 }
 
-// Compute months to payoff at a fixed monthly payment (simple amortization)
 function monthsToPayoff(balance, annualRate, monthlyPayment) {
   if (balance <= 0) return 0;
   if (monthlyPayment <= 0) return null;
@@ -38,7 +38,6 @@ function monthsToPayoff(balance, annualRate, monthlyPayment) {
   return Math.ceil(n);
 }
 
-// Total interest paid over the life of the debt at minimum payment
 function totalInterestCost(balance, annualRate, monthlyPayment) {
   const months = monthsToPayoff(balance, annualRate, monthlyPayment);
   if (months === null) return null;
@@ -47,9 +46,13 @@ function totalInterestCost(balance, annualRate, monthlyPayment) {
 
 function DebtPage() {
   const { debts, loading, error } = useDebt();
-  const { hidden } = useHideNumbers();
+  const { hidden }                = useHideNumbers();
+  const { fmtMoney, usdToIdr }   = useCurrency();
 
   const [filter, setFilter] = useState('All');
+
+  // Normalize a debt-native amount to USD for display via fmtMoney
+  const toUSD = (d, amt) => d.currency === 'IDR' ? (amt || 0) / usdToIdr : (amt || 0);
 
   const types = useMemo(() => ['All', ...new Set(debts.map((d) => d.type))], [debts]);
 
@@ -59,25 +62,26 @@ function DebtPage() {
   );
 
   const summary = useMemo(() => {
-    const totalBalance    = debts.reduce((s, d) => s + d.balance, 0);
-    const totalMinPayment = debts.reduce((s, d) => s + d.minimumPayment, 0);
-    const totalPaidAll    = debts.reduce((s, d) => s + (d.totalPaid || 0), 0);
+    const norm     = (d, amt) => d.currency === 'IDR' ? (amt || 0) / usdToIdr : (amt || 0);
+    const totalBalance    = debts.reduce((s, d) => s + norm(d, d.balance), 0);
+    const totalMinPayment = debts.reduce((s, d) => s + norm(d, d.minimumPayment), 0);
+    const totalPaidAll    = debts.reduce((s, d) => s + norm(d, d.totalPaid || 0), 0);
     const totalMonthsPaid = debts.reduce((s, d) => s + (d.monthsPaid || 0), 0);
     const avgRate         = debts.length
       ? debts.reduce((s, d) => s + d.interestRate, 0) / debts.length
       : 0;
     const highest = debts.reduce((best, d) => (!best || d.interestRate > best.interestRate) ? d : best, null);
-    const totalInterest   = debts.reduce((s, d) => {
+    const totalInterest = debts.reduce((s, d) => {
       const interest = totalInterestCost(d.balance, d.interestRate, d.minimumPayment);
-      return s + (interest ?? 0);
+      return s + (interest !== null ? norm(d, interest) : 0);
     }, 0);
     return { totalBalance, totalMinPayment, totalPaidAll, totalMonthsPaid, avgRate, highest, totalInterest };
-  }, [debts]);
+  }, [debts, usdToIdr]);
 
   if (loading) return <LoadingScreen message="Loading debts…" />;
   if (error)   return <ErrorScreen message={error} />;
 
-  const m = (v) => hidden ? MASK : fmtIDR(v);
+  const m = (v) => hidden ? MASK : fmtMoney(v);
 
   return (
     <div className="debt-page">
@@ -173,8 +177,9 @@ function DebtPage() {
             <tbody>
               {filtered.map((d) => {
                 const months          = monthsToPayoff(d.balance, d.interestRate, d.minimumPayment);
-                const monthlyInterest = d.balance * (d.interestRate / 100 / 12);
-                
+                const monthlyInterest = toUSD(d, d.balance * (d.interestRate / 100 / 12));
+                const totalInterest   = totalInterestCost(d.balance, d.interestRate, d.minimumPayment);
+
                 const isPaid = d.status === 'Lunas' || d.balance <= 0;
                 let payoffLabel;
                 if (isPaid) {
@@ -187,13 +192,9 @@ function DebtPage() {
                   payoffLabel = `${months} bulan`;
                 }
 
-                const totalInterest = totalInterestCost(d.balance, d.interestRate, d.minimumPayment);
-
-                // Payment progress from transactions
-                const paid       = d.totalPaid  || 0;
-                const paidMonths = d.monthsPaid  || 0;
-                const tenor      = d.tenor       || 0;
-                // Progress percentage: monthsPaid / tenor
+                const paid        = d.totalPaid  || 0;
+                const paidMonths  = d.monthsPaid  || 0;
+                const tenor       = d.tenor       || 0;
                 const progressPct = tenor > 0 ? Math.min((paidMonths / tenor) * 100, 100) : 0;
 
                 return (
@@ -215,7 +216,7 @@ function DebtPage() {
                         <span className="debt-status-badge active">Aktif</span>
                       )}
                     </td>
-                    <td className="num debt-balance">{m(d.balance)}</td>
+                    <td className="num debt-balance">{m(toUSD(d, d.balance))}</td>
                     <td className="num">
                       {d.monthlyInterestRate != null
                         ? <span className={d.monthlyInterestRate > 2 ? 'debt-rate-high' : d.monthlyInterestRate > 1 ? 'debt-rate-mid' : 'debt-rate-low'}>
@@ -229,9 +230,9 @@ function DebtPage() {
                       </span>
                     </td>
                     <td className="num muted">{d.tenor != null ? `${d.tenor} bln` : '—'}</td>
-                    <td className="num">{m(d.minimumPayment)}</td>
+                    <td className="num">{m(toUSD(d, d.minimumPayment))}</td>
                     <td className="num muted">{d.dueDay}</td>
-                    <td className="num" style={{ color: '#3fb950' }}>{m(paid)}</td>
+                    <td className="num" style={{ color: '#3fb950' }}>{m(toUSD(d, paid))}</td>
                     <td className="num">
                       <div className="debt-progress-cell">
                         <span>{paidMonths}{tenor > 0 ? ` / ${tenor}` : ''} bln</span>
@@ -250,7 +251,7 @@ function DebtPage() {
                     <td className="num debt-interest">
                       {totalInterest === null
                         ? <span className="muted">—</span>
-                        : m(totalInterest)}
+                        : m(toUSD(d, totalInterest))}
                     </td>
                   </tr>
                 );

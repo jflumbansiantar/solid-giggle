@@ -37,7 +37,8 @@ function DebtForm() {
   const [status,   setStatus]   = useState(null);
   const [tick,     setTick]     = useState(0);
   const [selected, setSelected] = useState(new Set());
-  const { fmtRaw, currency } = useCurrency();
+  const { fmtMoney, fmtRaw, currency, usdToIdr } = useCurrency();
+  const toUSD = (d, amt) => d.currency === 'IDR' ? (amt || 0) / usdToIdr : (amt || 0);
 
   useEffect(() => {
     setLoading(true);
@@ -294,11 +295,11 @@ function DebtForm() {
                         {d.status === 'Lunas' ? 'LUNAS' : 'ACTIVE'}
                       </span>
                     </td>
-                    <td>{fmtRaw(d.balance)}</td>
+                    <td>{fmtMoney(toUSD(d, d.balance))}</td>
                     <td>{d.monthlyInterestRate != null ? `${fmt(d.monthlyInterestRate, 2)}%` : '—'}</td>
                     <td>{fmt(d.interestRate, 2)}%</td>
                     <td>{d.tenor != null ? `${d.tenor} bln` : '—'}</td>
-                    <td>{fmtRaw(d.minimumPayment)}</td>
+                    <td>{fmtMoney(toUSD(d, d.minimumPayment))}</td>
                     <td>{d.dueDay}</td>
                     <td>{d.debtApp || <span style={{ color: 'var(--text-secondary)' }}>—</span>}</td>
                     <td>

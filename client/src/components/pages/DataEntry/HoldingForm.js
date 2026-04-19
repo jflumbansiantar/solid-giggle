@@ -24,7 +24,7 @@ function HoldingForm() {
   const [status,    setStatus]    = useState(null);
   const [tick,      setTick]      = useState(0);
   const [selected,  setSelected]  = useState(new Set());
-  const { fmtMoney, fmtRaw, currency } = useCurrency();
+  const { fmtMoney, fmtRaw, currency, usdToIdr } = useCurrency();
 
   useEffect(() => {
     setLoading(true);
@@ -205,7 +205,7 @@ function HoldingForm() {
                     <td style={{ color: 'var(--text-secondary)' }}>{h.subType || <span style={{ color: 'var(--text-secondary)' }}>—</span>}</td>
                     <td>{h.market}</td>
                     <td>{h.shares}</td>
-                    <td>{fmtRaw(h.avgCost)}</td>
+                    <td>{fmtMoney(h.market === 'ID' ? h.avgCost / usdToIdr : h.avgCost)}</td>
                     <td>
                       <div className="de-action-btns">
                         <button className="de-icon-btn edit" title="Edit" onClick={() => handleEdit(h)}><PencilIcon /></button>

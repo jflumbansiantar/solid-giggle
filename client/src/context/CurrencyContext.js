@@ -14,7 +14,10 @@ export function CurrencyProvider({ children }) {
 
   useEffect(() => {
     fetchSettings()
-      .then((s) => { if (s.usdToIdr) setUsdToIdr(s.usdToIdr); })
+      .then((s) => {
+        const rate = parseFloat(s.usdToIdr);
+        if (!isNaN(rate) && rate > 0) setUsdToIdr(rate);
+      })
       .catch(() => {/* keep fallback */});
   }, []);
 
@@ -29,13 +32,15 @@ export function CurrencyProvider({ children }) {
   }, []);
 
   const fmtMoney = useCallback((n) => {
-    if (currency === 'IDR') return fmtIDR(n * usdToIdr);
-    return fmtUSD(n);
+    const v = isNaN(n) ? 0 : (n ?? 0);
+    if (currency === 'IDR') return fmtIDR(v * usdToIdr);
+    return fmtUSD(v);
   }, [currency, usdToIdr]);
 
   const fmtMoneyCompact = useCallback((n) => {
-    if (currency === 'IDR') return fmtIDRCompact(n * usdToIdr);
-    return fmtUSDCompact(n);
+    const v = isNaN(n) ? 0 : (n ?? 0);
+    if (currency === 'IDR') return fmtIDRCompact(v * usdToIdr);
+    return fmtUSDCompact(v);
   }, [currency, usdToIdr]);
 
   // Format without conversion — just apply currency symbol to the raw value
